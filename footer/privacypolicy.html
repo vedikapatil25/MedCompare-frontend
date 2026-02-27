@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel = "stylesheet" href = "about.css">
+</head>
+<body>
+    <div class = "about-container">
+        <h1>Privacy Policy</h1>
+        <h2>Introduction</h2>
+        <p>At MedCompare, we respect your privacy and are committed to protecting any personal information you share with us. This Privacy Policy explains how we collect, use, and safeguard user information when you visit or use our website.</p>
+
+        <h2>Information We Collect</h2>
+        <p>MedCompare does not require users to create an account to access price comparison features. However, we may collect limited information such as:
+        <ul>
+            <li>Non-personal data (browser type, device information)</li>
+
+            <li>Usage data (pages visited, time spent on the website)</li>
+
+            <li>Contact information provided voluntarily through contact forms</li>
+        </ul>
+        </p>
+
+        <h2>How We Use Information</h2>
+        <p>The information we collect is used to:
+            <ul>
+                <li>Improve website performance and user experience</li>
+                <li>Analyze website traffic and usage trends</li>
+                <li>Respond to user queries or feedback</li>
+                <li>Maintain website security and prevent misuse</li>
+            </ul>
+        </p>
+
+        <h2>Third-Party Links</h2>
+        <p>Our website contains links to third-party platforms such as PharmEasy, Apollo Pharmacy, and Tata 1mg. MedCompare is not responsible for the privacy practices or content of these external websites. Users are advised to review the privacy policies of third-party sites before providing any personal information.</p>
+
+        <h2>Data Security</h2>
+        <p>We implement reasonable security measures to protect user data from unauthorized access, alteration, or disclosure. However, no online platform can guarantee 100% security.</p>
+
+        <h2></h2>
+    </div>
+    <!-- Footer -->
+  <div id="footer"></div>
+    <!-- Load Footer -->
+   <script>
+     // Load Footer
+  fetch("../footer/footer.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("footer").innerHTML = data;
+    });
+   </script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .product-list {
+            width: 90%;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .product-card {
+            width: 200px;
+            background: white;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            text-align: center;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .product-card img {
+            width: 100%;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 id="title"></h1>
+
+    <div id="productContainer" class="product-list"></div>
+
+    <script>
+        // Product Data
+        const products = [
+            { id: 1, name: "Moisturizer", price: "₹299", category: "skincare", img: "https://via.placeholder.com/150" },
+            { id: 2, name: "Face Wash", price: "₹199", category: "skincare", img: "https://via.placeholder.com/150" },
+            { id: 3, name: "Vitamin C Tablets", price: "₹199", category: "medicine", img: "https://via.placeholder.com/150" },
+            { id: 4, name: "Paracetamol 500mg", price: "₹20", category: "medicine", img: "https://via.placeholder.com/150" }
+        ];
+
+        const container = document.getElementById("productContainer");
+        const title = document.getElementById("title");
+
+        // Read category from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get("category"); // Example: skincare
+
+        // Update Title based on category
+        title.textContent = category.charAt(0).toUpperCase() + category.slice(1) + " Products";
+
+        // Filter and load products
+        function loadProducts() {
+            const filtered = products.filter(p => p.category === category);
+
+            filtered.forEach(item => {
+                container.innerHTML += `
+                    <div class="product-card">
+                        <img src="${item.img}" alt="${item.name}">
+                        <h3>${item.name}</h3>
+                        <p>${item.price}</p>
+                    </div>
+                `;
+            });
+        }
+
+        loadProducts();
+    </script>
+
+</body>
+</html>

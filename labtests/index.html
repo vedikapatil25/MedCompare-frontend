@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel = "stylesheet" href = "style.css">
+</head>
+<body>
+    <!-- Navbar -->
+<div id="navbar"></div>
+<script>
+  // Load navbar
+  fetch("../navbar/nav.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("navbar").innerHTML = data;
+
+      // ADD EVENT LISTENERS AFTER NAVBAR LOADS
+      const openBtn = document.getElementById("openPopup");
+      const popup = document.getElementById("loginPopup");
+      const overlay = document.getElementById("overlay");
+
+      openBtn.onclick = () => {
+        popup.style.display = "flex";
+        overlay.style.display = "block";
+      };
+
+      overlay.onclick = () => {
+        popup.style.display = "none";
+        overlay.style.display = "none";
+      };
+    });
+</script>
+
+    <!--hero section-->
+    <section class="hero">
+    <h1>Compare Medicine</h1>
+    <p>Find the best deals on trusted pharmacies and labs near you.</p>
+    <input type="text" placeholder="Search medicine..." />
+    <button class="compare-btn">Compare Now</button>
+    </section>
+    
+    <!-- Footer -->
+  <div id="footer"></div>
+    <!-- Load Footer -->
+   <script>
+     // Load Footer
+  fetch("../footer/footer.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("footer").innerHTML = data;
+    });
+   </script>
+
+    
+    <script src = "script.js"></script>
+
+</body>
+</html>

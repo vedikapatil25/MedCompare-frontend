@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel = "stylesheet" href = "about.css">
+</head>
+<body>
+    <div class="about-container">
+        <h1>Terms and Conditions</h1>
+
+        <h2>Introduction</h2>
+        <p>Welcome to MedCompare. By accessing or using this website, you agree to comply with and be bound by these Terms and Conditions. If you do not agree with any part of these terms, please do not use our website.</p>
+
+        <h2>About MedCompare</h2>
+        <p>MedCompare is a price comparison platform that provides information on medicine and lab test prices from third-party healthcare providers such as PharmEasy, Apollo Pharmacy, and Tata 1mg. MedCompare does not sell medicines, lab tests, or healthcare products directly.</p>
+
+        <h2>Use of Website</h2>
+        <p>By using MedCompare, you agree to:
+            <ul>
+                <li>Use the website only for lawful purposes</li>
+                <li>Not misuse or attempt to damage the website or its functionality</li>
+                <li>Not engage in activities such as hacking, data scraping, or unauthorized access</li>
+                <li>Not use the website to spread false, harmful, or misleading information</li>
+            </ul>
+        </p>
+
+        <h2>Accuracy of Information</h2>
+        <p>While we strive to provide accurate and updated price information, MedCompare does not guarantee the completeness or accuracy of prices, discounts, or availability. Prices and offers may change on third-party platforms without prior notice.</p>
+
+        <h2>Third-Party Links</h2>
+        <p>MedCompare contains links to external websites operated by third parties. We are not responsible for the content, services, or policies of these websites. Any transactions made on third-party platforms are solely between the user and the respective provider.</p>
+
+        <h2>Intellectual Property</h2>
+        <p>All content on MedCompare, including text, design, layout, logos, and code, is the intellectual property of MedCompare, unless otherwise stated. Unauthorized copying, reproduction, or distribution of website content is prohibited.</p>
+
+
+        <h2>Limitation of Liability</h2>
+        <p>MedCompare shall not be held liable for:
+            <ul>
+                <li>Any financial loss, health-related decisions, or damages arising from the use of the website</li>
+                <li>Errors, delays, or interruptions in website functionality</li>
+                <li>Actions taken based on information provided by third-party platforms</li>
+            </ul>
+            Users are advised to verify information directly with the respective service provider before making any purchase or medical decision.
+        </p>
+
+        <h2>Privacy</h2>
+        <p>User privacy is important to us. Please refer to our Privacy Policy for information on how we collect, use, and protect user data.</p>
+
+        <h2>Modifications to Terms</h2>
+        <p>MedCompare reserves the right to update or modify these Terms and Conditions at any time without prior notice. Continued use of the website after changes indicates acceptance of the updated terms.</p>
+    </div>
+    <!-- Footer -->
+  <div id="footer"></div>
+    <!-- Load Footer -->
+   <script>
+     // Load Footer
+  fetch("../footer/footer.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("footer").innerHTML = data;
+    });
+   </script>
+</body>
+</html>

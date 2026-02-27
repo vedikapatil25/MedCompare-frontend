@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel = "stylesheet" href = "style.css">
+</head>
+<body>
+    <!-- Navbar -->
+<div id="navbar"></div>
+<script>
+  // Load navbar
+  fetch("../navbar/nav.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("navbar").innerHTML = data;
+
+      // ADD EVENT LISTENERS AFTER NAVBAR LOADS
+      const openBtn = document.getElementById("openPopup");
+      const popup = document.getElementById("loginPopup");
+      const overlay = document.getElementById("overlay");
+
+      openBtn.onclick = () => {
+        popup.style.display = "flex";
+        overlay.style.display = "block";
+      };
+
+      overlay.onclick = () => {
+        popup.style.display = "none";
+        overlay.style.display = "none";
+      };
+    });
+</script>
+
+    <!--hero section-->
+    <section class="hero">
+    <h1>Compare Medicine</h1>
+    <p>Find the best deals on trusted pharmacies and labs near you.</p>
+    <input type="text" placeholder="Search medicine..." />
+    <button class="compare-btn">Compare Now</button>
+    </section>
+    <!--show by categories-->
+    <div id="shop-categories-container"><b>Browse Medicine By Categories</b>
+        <div id = "shop-categories">
+             <button class="prev-btn">&#10094;</button>
+             <div class = "img-div">
+                <a href = "ayurvediccare.html"><img src = "../images/ayurvediccare.webp" class = "shop-images">
+                <span>Ayurvedic Care</span> </a> 
+             </div>
+            <div class = "img-div">
+                <a href = "mother&babycare.html"><img src = "../images/motherandbabycare.webp" class = "shop-images">
+                <span>Mother And Baby Care</span> </a> 
+            </div>
+            <div class = "img-div" >
+                <a href = "wintercare.html"><img src = "../images/winterstore.webp" class = "shop-images">
+                <span>Winter Care</span></a>
+                  
+            </div>
+            <div class = "img-div">
+                <a href = "skincare.html"><img src = "../images/skincare.webp" class = "shop-images">
+                <span>Skin Care</span>  </a>
+            </div>
+            <div class = "img-div">
+                <a href = "personalcare.html"><img src = "../images/personalcare.webp" class = "shop-images">
+                <span>Personal Care</span></a>
+            </div>
+             <button class="next-btn">&#10095;</button>
+        </div>
+    </div>
+    <!-- Footer -->
+  <div id="footer"></div>
+    <!-- Load Footer -->
+   <script>
+     // Load Footer
+  fetch("../footer/footer.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("footer").innerHTML = data;
+    });
+   </script>
+
+    <button id="toggleMode">🌙 Toggle Mode</button>
+    <script src = "script.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About Us | MedCompare</title>
+  <link rel="stylesheet" href="about.css">
+</head>
+<body>
+<div class="about-container">
+  <h1>About us</h1>
+  <h2>Welcome To MedCompare</h2>
+  <p>
+    MedCompare is a healthcare price comparison platform designed to help users find the best prices for medicines and across leading online healthcare providers such as PharmEasy, Apollo Pharmacy, and Tata 1mg. Our goal is to make healthcare more affordable, transparent, and accessible for everyone.
+  </p>
+  <h2>Our Mission</h2>
+  <p>Our mission is to empower users with accurate price information so they can make informed healthcare decisions without overpaying for medicines or diagnostic services. We aim to save both time and money by bringing price comparisons to a single, easy-to-use platform.</p>
+  <h2>Why Choose MedCompare?</h2>
+  <p>
+    <ul>
+        <li>Transparent Price Comparison – View prices from multiple providers in one place</li>
+
+        <li>Trusted Sources – Comparisons are shown only from reliable platforms</li>
+
+        <li>Time Saving – No need to visit multiple websites</li>
+
+        <li>User-Friendly Interface – Simple and intuitive design</li>
+        <li>Cost Effective Healthcare – Helps users choose the most affordable option</li>
+    </ul>
+    <h2>Our Vision</h2>
+  </p>
+  <p>Our vision is to become a trusted digital healthcare assistant that simplifies price comparison and promotes smart healthcare spending. We aim to expand MedCompare to include more pharmacies, lab services, and healthcare products in the future.</p>
+
+  <h2>Disclaimer</h2>
+  <p>MedCompare does not sell medicines or lab tests directly. We only provide price comparisons and redirect users to official partner websites for final purchases. Prices and availability may change according to the respective platforms.</p>
+</div>
+ <!-- Footer -->
+  <div id="footer"></div>
+    <!-- Load Footer -->
+   <script>
+     // Load Footer
+  fetch("../footer/footer.html")
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("footer").innerHTML = data;
+    });
+   </script>
+</body>
+</html>
