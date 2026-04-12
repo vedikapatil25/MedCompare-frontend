@@ -37,6 +37,33 @@ const products = [
 const container = document.getElementById("productContainer");
 const categoryButtons = document.querySelectorAll(".cat-btn");
 
+
+function loadProducts(category) {
+  fetch(`http://localhost:8080/api/medicines/category/${category}`)
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById("productContainer");
+      container.innerHTML = "";
+
+      data.forEach(item => {
+        const card = document.createElement("div");
+        card.classList.add("product-card");
+
+        card.innerHTML = `
+          <img src="${item.imageUrl ? item.imageUrl : '../images/default.png'}">
+          <h3>${item.name}</h3>
+          <p>₹${item.price}</p>
+        `;
+
+        card.addEventListener("click", () => {
+          alert(`You clicked ${item.name}`);
+        });
+
+        container.appendChild(card);
+      });
+    });
+}
+
 // Show products based on category
 categoryButtons.forEach(btn => {
   btn.addEventListener("click", () => {
@@ -73,3 +100,4 @@ prevBtn.addEventListener("click", () => {
 toggleBtn.addEventListener("click", () => {
   document.body.classList.toggle("light-mode");
 });
+loadProducts("ayurvedic");

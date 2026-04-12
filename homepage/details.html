@@ -1,0 +1,24 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1 id="name"></h1>
+<p id="price"></p>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  fetch(`http://localhost:8080/medicines/${id}`)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("name").innerText = data.name;
+      document.getElementById("price").innerText = "₹" + data.price;
+    });
+</script>
+</body>
+</html> -->
