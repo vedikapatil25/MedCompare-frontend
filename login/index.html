@@ -20,10 +20,12 @@
             <h2>MedCompare</h2>
             <p>Login / Signup</p>
 
-            <input type="number" placeholder="Enter your 10-digit mobile number">
-
-            <button class="otp-btn">Get OTP</button>
-         </div>
+            <input type="email" id="email" placeholder="Enter email"><br><br>
+            <input type="password" id="password" placeholder="Enter password"><br><br>
+            <button class="otp-btn" onclick="login()">Login</button>
+            <button onclick="getProfile()">Get Profile</button>
+            <button onclick="adminDashboard()">Admin Panel</button>
+        </div>
     </div>
 
     <button id="openPopup">Open Login</button>

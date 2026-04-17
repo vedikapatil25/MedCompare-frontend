@@ -120,6 +120,22 @@ nav li:hover{
   gap: 15px;
   padding-top: 10px;
 }
+#userBtn {
+  background: #1e293b;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#dropdownMenu p {
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+#dropdownMenu p:hover {
+  color: #2563eb;
+}
 
 .right-box input {
   padding: 12px;
@@ -137,12 +153,24 @@ nav li:hover{
   cursor: pointer;
   font-size: 17px;
 }
+/* Profile Icon */
+
+.profile-icon {
+  width: 35px;
+  height: 35px;
+  background: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
 
     </style>
 </head>
 <body>
     <!-- Navbar -->
-  <nav id = "navbar">
+  <nav>
     <h2 class="logo">MedCompare</h2>
     <ul>
       <li><a href="../homepage/index.html">Home</a></li>
@@ -150,7 +178,19 @@ nav li:hover{
       <!-- <li><a href="../labtests/index.html">Lab Tests</a></li> -->
       <li><a href="../footer/about.html">About</a></li>
       <li><button class="loginBtn" id="openPopup">Login</button></li>
-    </ul>
+
+  <!-- Profile Icon -->
+
+  <li id="profileNav" style="display:none;">
+  <button id="profileBtn" class="profile-icon">👤</button>
+</li>
+<!-- ✅ ADMIN BUTTON -->
+  <li>
+    <button id="adminBtn" style="display:none;">Admin</button>
+  </li>
+
+</li>
+ </ul>
   </nav>
   <!-- BLUR OVERLAY -->
   <div class="overlay" id="overlay"></div>
@@ -167,16 +207,20 @@ nav li:hover{
       <h2>MedCompare</h2>
       <p>Login / Signup</p>
 
-      <input type="number" placeholder="Enter your 10-digit mobile number">
-
-      <button class="otp-btn">Get OTP</button>
-
+      <input type="email" id="email" placeholder="Enter email"><br><br>
+      <input type="password" id="password" placeholder="Enter password"><br><br>
+      <button class="otp-btn">Login</button>
+      <!-- <button class="otp-btn">Get OTP</button> -->
+      <button id = "getProfileBtn">Get Profile</button>
+<button id="adminBtn" style="display:none;">Admin Panel</button>
       <label>
         <input type="checkbox" checked>
         I agree to the <a href="#">Terms & Conditions</a>
       </label>
     </div>
-  </div>
+    
+    
+   <!-- <script src = "nav.js"></script> -->
 
 
 </body>

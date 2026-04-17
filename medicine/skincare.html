@@ -10,29 +10,8 @@
 <body>
     <!-- Navbar -->
     <div id="navbar"></div>
- <script>
-  // Load navbar
-  fetch("../navbar/nav.html")
-    .then(res => res.text())
-    .then(data => {
-      document.getElementById("navbar").innerHTML = data;
+<script src="/navbar/nav.js"></script>
 
-      // ADD EVENT LISTENERS AFTER NAVBAR LOADS
-      const openBtn = document.getElementById("openPopup");
-      const popup = document.getElementById("loginPopup");
-      const overlay = document.getElementById("overlay");
-
-      openBtn.onclick = () => {
-        popup.style.display = "flex";
-        overlay.style.display = "block";
-      };
-
-      overlay.onclick = () => {
-        popup.style.display = "none";
-        overlay.style.display = "none";
-      };
-    });
- </script>
 
   <div class="search-container" style="max-width:1200px;margin: 0 auto;">
     <input id="searchInput" placeholder="Search Ayurvedic products..." />

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile</title>
+  <style>
+    body {
+  font-family: Arial;
+  background: linear-gradient(to right, #0f172a, #1e3a8a);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.card {
+  background: #1e293b;
+  padding: 40px;
+  border-radius: 15px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Avatar circle */
+.avatar {
+  width: 70px;
+  height: 70px;
+  background: #3b82f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  margin: 0 auto 15px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px;
+  width: 100%;
+  background: #ef4444;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+    
+  </style>
+</head>
+<body>
+
+  <div class="card">
+  <div class="avatar" id="avatar">U</div>
+
+  <h2 id="name"></h2>
+  <p id="email"></p>
+
+  <button onclick="logout()">Logout</button>
+</div>
+
+  <script>
+    const token = localStorage.getItem("token");
+
+if (!token) {
+  alert("Please login first");
+  window.location.href = "/homepage/index.html";
+}
+    const user = localStorage.getItem("user") || "Guest";
+const email = localStorage.getItem("email") || "Not available";
+
+document.getElementById("name").innerText = "Name: " + user;
+document.getElementById("email").innerText = "Email: " + email;
+
+document.getElementById("avatar").innerText = user.charAt(0).toUpperCase();
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("email");
+
+      window.location.href = "/homepage/index.html";
+    }
+  </script>
+
+</body>
+</html>

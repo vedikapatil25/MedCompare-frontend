@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      margin: 0;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background: #1e293b;
+      padding: 20px;
+      height: 100vh;
+    }
+
+    .sidebar h2 {
+      color: #60a5fa;
+    }
+
+    .sidebar button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      background: #3b82f6;
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      padding: 40px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="sidebar">
+    <h2>Admin Panel</h2>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="main">
+    <h1>Welcome Admin 👋</h1>
+
+    <div class="card">
+      <p id="email"></p>
+      <p id="role"></p>
+    </div>
+
+    <div class="card">
+  <h3>All Users</h3>
+
+  <table border="1" width="100%" style="margin-top:10px;">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+
+    <tbody id="userTable">
+      <!-- Data will come here -->
+    </tbody>
+  </table>
+
+</div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    // ✅ Protect page
+    if (!token) {
+      alert("Login required");
+      window.location.href = "/homepage/index.html";
+    }
+
+    if (role !== "ADMIN") {
+      alert("Access denied");
+      window.location.href = "/homepage/index.html";
+    }
+
+    // Show data
+    document.getElementById("email").innerText =
+      "Email: " + localStorage.getItem("email");
+
+    document.getElementById("role").innerText =
+      "Role: " + role;
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "/homepage/index.html";
+    }
+    function loadUsers() {
+  fetch("http://localhost:8080/api/users/admin/users", {
+    headers: {
+      "Authorization": "Bearer " + localStorage.getItem("token")
+    }
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Access denied");
+    return res.json();
+  })
+  .then(users => {
+    const table = document.getElementById("userTable");
+    table.innerHTML = "";
+
+    users.forEach(user => {
+      const row = `
+        <tr>
+          <td>${user.id}</td>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+        </tr>
+      `;
+      table.innerHTML += row;
+    });
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Failed to load users");
+  });
+}
+loadUsers();
+  </script>
+
+</body>
+</html>
