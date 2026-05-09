@@ -242,4 +242,339 @@ body.light-mode .card{
   font-size: 14px;
   color: #888;
 }
+/* ═══════════════════════════════════════════════════
+   
+   ═══════════════════════════════════════════════════ */
 
+/* Overlay */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Modal box */
+.modal-content {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 540px;
+  overflow: hidden;
+  animation: mcSlideUp 0.22s ease;
+  position: relative;
+}
+
+@keyframes mcSlideUp {
+  from { transform: translateY(18px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* Close button */
+.close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  font-size: 22px;
+  color: #64748b;
+  cursor: pointer;
+  line-height: 1;
+  background: none;
+  border: none;
+  transition: color 0.15s;
+  z-index: 2;
+}
+.close:hover { color: #e2e8f0; }
+
+/* ── Header ── */
+.mc-modal-header {
+  display: flex;
+  gap: 16px;
+  padding: 1.25rem 1.25rem 1rem;
+  border-bottom: 1px solid #1e293b;
+}
+
+.mc-modal-img-wrap {
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.mc-modal-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 6px;
+}
+
+.mc-modal-title-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mc-modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.mc-modal-desc {
+  font-size: 12.5px;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.mc-price-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.mc-price-range-label {
+  font-size: 11.5px;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mc-price-range-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #93c5fd;
+}
+
+/* ── Store list ── */
+.mc-store-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 1rem 1.25rem;
+}
+
+.mc-store-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  transition: border-color 0.15s;
+}
+
+.mc-store-row:hover {
+  border-color: #475569;
+}
+
+.mc-store-row--best {
+  background: #052e16;
+  border-color: #166534;
+}
+
+.mc-store-row--best:hover {
+  border-color: #15803d;
+}
+
+.mc-store-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mc-store-info .ti {
+  font-size: 17px;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.mc-store-row--best .mc-store-info .ti {
+  color: #4ade80;
+}
+
+.mc-store-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+.mc-store-row--best .mc-store-name {
+  color: #86efac;
+}
+
+.mc-best-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  background: #166534;
+  color: #4ade80;
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.mc-store-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: #e2e8f0;
+  min-width: 48px;
+  text-align: right;
+}
+
+.mc-store-row--best .mc-store-price {
+  color: #4ade80;
+}
+
+/* Buy button */
+.mc-buy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #93c5fd;
+  border: 1px solid #1d4ed8;
+  border-radius: 7px;
+  padding: 5px 12px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+
+.mc-buy-btn:hover {
+  background: #1e3a8a;
+  border-color: #2563eb;
+  color: #bfdbfe;
+}
+
+.mc-buy-btn--best {
+  color: #4ade80;
+  border-color: #166534;
+}
+
+.mc-buy-btn--best:hover {
+  background: #14532d;
+  border-color: #15803d;
+  color: #86efac;
+}
+
+.mc-buy-btn .ti {
+  font-size: 13px;
+}
+
+/* ── Savings tip ── */
+.mc-savings-tip {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 1.25rem 1.25rem;
+  padding: 10px 14px;
+  border-radius: 9px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.mc-savings-tip .ti {
+  font-size: 16px;
+  color: #4ade80;
+  flex-shrink: 0;
+}
+
+.mc-savings-tip strong {
+  color: #4ade80;
+}
+
+/* ── Light mode overrides ── */
+body.light-mode .modal-content {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+body.light-mode .mc-modal-header {
+  border-color: #e2e8f0;
+}
+
+body.light-mode .mc-modal-img-wrap {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+body.light-mode .mc-modal-title   { color: #0f172a; }
+body.light-mode .mc-modal-desc    { color: #64748b; }
+body.light-mode .mc-price-range-value { color: #1d4ed8; }
+
+body.light-mode .mc-store-row {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+body.light-mode .mc-store-row--best {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+body.light-mode .mc-store-name    { color: #334155; }
+body.light-mode .mc-store-price   { color: #0f172a; }
+body.light-mode .mc-store-info .ti { color: #94a3b8; }
+
+body.light-mode .mc-store-row--best .mc-store-name { color: #166534; }
+body.light-mode .mc-store-row--best .mc-store-price { color: #15803d; }
+body.light-mode .mc-store-row--best .mc-store-info .ti { color: #16a34a; }
+
+body.light-mode .mc-best-badge {
+  background: #dcfce7;
+  color: #166534;
+}
+
+body.light-mode .mc-savings-tip {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #64748b;
+}
+
+body.light-mode .mc-savings-tip .ti,
+body.light-mode .mc-savings-tip strong { color: #16a34a; }
+
+body.light-mode .mc-buy-btn {
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+body.light-mode .mc-buy-btn:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1e40af;
+}
+
+body.light-mode .mc-buy-btn--best {
+  color: #166534;
+  border-color: #bbf7d0;
+}
+body.light-mode .mc-buy-btn--best:hover {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #14532d;
+}

@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel = "stylesheet" href = "style.css">
+    <link rel = "stylesheet" href = "../homepage/style.css">
+    <!-- <link rel = "stylesheet" href = "style.css"> -->
+    <link rel = "stylesheet" href = "ayurvedic.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
 </head>
 <body>
     <!-- Navbar -->
@@ -16,9 +20,25 @@
     <section class="hero">
     <h1>Compare Medicine</h1>
     <p>Find the best deals on trusted pharmacies and labs near you.</p>
-    <input type="text" placeholder="Search medicine..." />
-    <button class="compare-btn">Compare Now</button>
+    <input type="text" id = "searchInput" placeholder="Search medicine..." />
+    <button id="searchBtn" class="compare-btn">Compare Now</button>
     </section>
+    
+    <!-- Popular Section -->
+  <section class="popular">
+    <h2>Popular Medicines</h2>
+    <!-- <div class="cards" id="medicineList"></div> -->
+    <div id="medicineList" class="product-container"></div>
+
+    <!-- <div class="cards">
+      <div class="card">Paracetamol</div>
+      <div class="card">Dolo 650</div>
+      <div class="card">Azithromycin</div>
+      <div class="card">Amoxicillin</div>
+    </div> -->
+  </section>
+
+  
     <!--show by categories-->
     <div id="shop-categories-container"><b>Browse Medicine By Categories</b>
         <div id = "shop-categories">
@@ -47,6 +67,20 @@
              <button class="next-btn">&#10095;</button>
         </div>
     </div>
+     
+    <!-- Modal (hidden until opened) -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <div id="modalBody" class="modal-body"></div>
+      <p id="modalDescription" class="modal-desc"></p>
+
+         <p id="lowestPriceTip" class="lowest-tip"></p>
+
+
+        <!-- filled by JS -->
+    </div>
+  </div>
     <!-- Footer -->
   <div id="footer"></div>
     <!-- Load Footer -->

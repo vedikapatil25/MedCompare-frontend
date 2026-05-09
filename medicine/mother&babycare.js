@@ -169,6 +169,7 @@
  ];
 
     // ------------------ RENDER ------------------
+    const BASE_URL = "http://localhost:8080";
     const productListEl = document.getElementById('productList');
     const modal = document.getElementById('modal');
     const modalBody = document.getElementById('modalBody');
@@ -176,23 +177,36 @@
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
     const container = document.getElementById("productList");
-
+    
+    function makePlaceholder(name) {
+    return `https://placehold.co/120x120?text=${encodeURIComponent(name.slice(0, 10))}`;
+    }
     function loadProducts(category) {
+      const token = localStorage.getItem("token");
 
+      if (!token) {
+        container.innerHTML = "Please login first";
+        return;
+      }
       container.innerHTML = "<p style='text-align:center'>Loading...</p>";
 
-    fetch(`http://localhost:8080/api/medicines/category/${category}`)
+    fetch(`http://localhost:8080/api/medicines/category/${category}`, {
+    headers: {
+    "Authorization": "Bearer " + localStorage.getItem("token")
+    }
+    }) 
     .then(res => {
     if (!res.ok) {
     throw new Error("Server error");
     }
     return res.json();
-    })    .then(data => {
+    })    
+    .then(data => {
 
       products.length = 0;
       products.push(...data);
       container.innerHTML = "";
-    // ✅ CHECK EMPTY DATA
+      //  CHECK EMPTY DATA
       if (data.length === 0) {
         container.innerHTML = "<p style='text-align:center;color:gray'>No products found</p>";       return;
       }
@@ -200,7 +214,7 @@
         const card = document.createElement("div");
         card.classList.add("product-card");
 
-        card.dataset.index = index;
+        card.dataset.id = item.id;
 
         // card.innerHTML = `
         //   <img src="${item.imageUrl || '../images/default.png'}" alt="${item.name}">          <h3>${item.name}</h3>
@@ -209,7 +223,6 @@
         card.innerHTML = `
           <img src="http://localhost:8080${item.imageUrl || '/images/default.png'}" alt="${item.name}">
           <h3>${item.name}</h3>
-          <p>₹${item.price}</p>
         `;
 
       
@@ -231,12 +244,11 @@ function renderProducts(list) {
   list.forEach((item, index) => {
     const card = document.createElement("div");
     card.classList.add("product-card");
-    card.dataset.index = index;
+    card.dataset.id = item.id;
 
     card.innerHTML = `
       <img src="http://localhost:8080${item.imageUrl || '/images/default.png'}" alt="${item.name}">
       <h3>${item.name}</h3>
-      <p>₹${item.price}</p>
     `;
 
     container.appendChild(card);
@@ -244,62 +256,103 @@ function renderProducts(list) {
 }
     // ------------------ EVENT DELEGATION ------------------
     // open modal when clicking product card OR Compare button
-    productListEl.addEventListener('click', (ev) => {
-      const btn = ev.target.closest('.open-modal-btn');
-      const card = ev.target.closest('.product-card');
+  // ------------------ EVENT DELEGATION ------------------
+    // open modal when clicking product card OR Compare button
+  productListEl.addEventListener('click', (ev) => {
+  const card = ev.target.closest('.product-card');
+  if (card) {
+    const id = Number(card.dataset.id);
+    const item = products.find(p => p.id == id);  // look up the object
+    if (item) openModal(item);                    
+  }
+});
 
-      if (btn) {
-        const idx = Number(btn.dataset.index);
-        openProductModal(idx);
-        return;
-      }
-      // if user clicks card itself (not button)
-      if (card) {
-        const idx = Number(card.dataset.index);
-        openProductModal(idx);
-      }
-    });
+    function getImgSrc(item) {
+  return item.imageUrl
+    ? `${BASE_URL}${item.imageUrl}`
+    : makePlaceholder(item.name);
+}
 
-    // ------------------ OPEN MODAL ------------------
-    function openProductModal(index) {
-      const product = products[index];
-      if (!product) return;
-      const prices = [
-      product.onemgPrice,
-      product.apolloPrice,
-      product.pharmeasyPrice
-      ].filter(p => p != null);
+function openModal(item) {
+  const allPrices = [
+    { store: "1mg",       price: item.onemgPrice,     url: item.onemgUrl     || `https://www.1mg.com/search/all?name=${encodeURIComponent(item.name)}`                },
+    { store: "Apollo",    price: item.apolloPrice,    url: item.apolloUrl    || `https://www.apollopharmacy.in/search-medicines/${encodeURIComponent(item.name)}`   },
+    { store: "Pharmeasy", price: item.pharmeasyPrice, url: item.pharmeasyUrl || `https://pharmeasy.in/search/all?name=${encodeURIComponent(item.name)}`             },
+  ].filter(p => p.price != null && p.price !== "N/A");
 
-      const minPrice = prices.length ? Math.min(...prices) : null;
-      // Build modal HTML similar to screenshot #2
-      modalBody.innerHTML = `
-        <div class = "product-desc">
-          <img src="http://localhost:8080${product.imageUrl ? product.imageUrl : '/images/default.png'}" alt = "${product.name}">          
-          <h2 style="margin-top:0">${product.name}
-            <span>${product.desc || ''}</span>
-          </h2>
+  if (!allPrices.length) return;
+
+  const lowestPrice = Math.min(...allPrices.map(p => p.price));
+  const highestPrice = Math.max(...allPrices.map(p => p.price));
+  const savings = (highestPrice - lowestPrice).toFixed(2);
+  const lowestStore = allPrices.find(p => p.price === lowestPrice);
+
+  // Sort: best deal first
+  const sorted = [...allPrices].sort((a, b) => a.price - b.price);
+
+  const storeIcons = {
+    "1mg":       "ti-pill",
+    "Apollo":    "ti-heart-plus",
+    "Pharmeasy": "ti-clipboard-heart",
+  };
+
+  const rows = sorted.map(p => {
+    const isBest = p.price === lowestPrice;
+    return `
+      <div class="mc-store-row ${isBest ? "mc-store-row--best" : ""}">
+        <div class="mc-store-info">
+          <i class="ti ${storeIcons[p.store] || "ti-building-store"}" aria-hidden="true"></i>
+          <span class="mc-store-name">${p.store}</span>
+          ${isBest ? `<span class="mc-best-badge">Best deal</span>` : ""}
         </div>
+        <span class="mc-store-price">₹${p.price}</span>
+        <a href="${p.url}" target="_blank" class="mc-buy-btn ${isBest ? "mc-buy-btn--best" : ""}">
+          Buy now <i class="ti ti-arrow-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    `;
+  }).join("");
 
+  const imgSrc = getImgSrc(item);
+  const desc = (item.desc || item.description || "").slice(0, 160).trim();
+  const shortDesc = desc.length === 160 ? desc + "…" : desc;
 
-        <div>
-          <table class="store-table" aria-label="store prices">
-            <thead>
-              <tr><th>Store</th><th>Price</th><th>Link</th></tr>
-            </thead>
-            <tbody>
-              ${buildRow("1mg", product.onemgPrice, product.onemgUrl , minPrice)}
-              ${buildRow("Apollo", product.apolloPrice, product.apolloUrl, minPrice)}
-              ${buildRow("Pharmeasy", product.pharmeasyPrice, product.pharmeasyUrl , minPrice)}
-         
-            </tbody>
-          </table>
+  document.getElementById("modalBody").innerHTML = `
+    <div class="mc-modal-header">
+      <div class="mc-modal-img-wrap">
+        <img
+          src="${imgSrc}"
+          alt="${item.name}"
+          onerror="this.onerror=null;this.src='${makePlaceholder(item.name)}'"
+        >
+      </div>
+      <div class="mc-modal-title-block">
+        <h2 class="mc-modal-title">${item.name}</h2>
+        ${shortDesc ? `<p class="mc-modal-desc">${shortDesc}</p>` : ""}
+        <div class="mc-price-range">
+          <span class="mc-price-range-label">Price range</span>
+          <span class="mc-price-range-value">₹${lowestPrice} – ₹${highestPrice}</span>
         </div>
-      `;
+      </div>
+    </div>
 
-      modal.style.display = 'flex';
-      // scroll top inside modal content (in case)
-      document.querySelector('.modal-content').scrollTop = 0;
-    }
+    <div class="mc-store-list">
+      ${rows}
+    </div>
+
+    ${savings > 0 ? `
+    <div class="mc-savings-tip">
+      <i class="ti ti-tag" aria-hidden="true"></i>
+      You save <strong>₹${savings}</strong> buying on ${lowestStore.store} vs the highest price
+    </div>` : ""}
+  `;
+
+  // Clear old lowestPriceTip (we replaced it inline)
+  const tip = document.getElementById("lowestPriceTip");
+  if (tip) tip.textContent = "";
+
+  document.getElementById("modal").style.display = "flex";
+}
 
     // function buildRow(storeName, storeObj) {
     //   if (!storeObj) {
@@ -315,13 +368,22 @@ function renderProducts(list) {
     // }
     function buildRow(name, price, url , minPrice) {
       if (!price) {
-      return `<tr><td>${name}</td><td>N/A</td><td>-</td></tr>`;
+      return `
+      <tr style="opacity:0.6">
+        <td>${name}</td>
+        <td>Not Available</td>
+        <td>-</td>
+      </tr>
+      `;
       }
+      // const buyLink = url 
+      // ? `<a href="${url}" target="_blank" rel="noopener" class="buy-btn">Buy</a>`
+      // : `<span style="color:gray">N/A</span>`;
 
       return `
       <tr>
         <td>${name}</td>
-        <td style="${minPrice && price === minPrice ? 'color:green;font-weight:bold' : ''}">        ₹${price}</td>
+        <td style="${minPrice && price === minPrice ? 'color:white;background:green;padding:5px;border-radius:5px' : ''}">₹${price}</td>
         <td><a href="${url}" target="_blank" class="buy-btn">Buy</a></td>
       </tr>
      `;
@@ -335,20 +397,27 @@ function renderProducts(list) {
 
     // ------------------ SEARCH ------------------
     searchBtn.addEventListener('click', doSearch);
-    searchInput.addEventListener('keyup', (e) => {
-      if (e.key === 'Enter') doSearch();
-    });
-
+    // searchInput.addEventListener('keyup', (e) => {
+    //   if (e.key === 'Enter') doSearch();
+    // });
+    searchInput.addEventListener("input", doSearch);
     function doSearch() {
       const q = searchInput.value.trim().toLowerCase();
       if (!q) {
-        renderProducts(products);
+        renderProducts(mother_baby);
         return;
       }
-      const filtered = products.filter(p => p.name.toLowerCase().includes(q) || (p.desc || '').toLowerCase().includes(q));
-      renderProducts(filtered);
+      const filtered = products.filter(p => 
+      (p.name && p.name.toLowerCase().includes(q)) || (p.desc && p.desc.toLowerCase().includes(q))
+      );
+    
+    // Show "No results"
+    if (filtered.length === 0) {
+      container.innerHTML = "<p style='text-align:center;color:gray'>No matching products</p>";
+      return;
     }
-
+    renderProducts(filtered);
+  }
     // Helpful: initial focus on search
     searchInput.focus();
     loadProducts("mother_baby");

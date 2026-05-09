@@ -32,8 +32,9 @@ function setupNavbar() {
   };
 
   // Login button
-  document.querySelector(".otp-btn")?.addEventListener("click", login);
-
+document.getElementById("loginBtn")?.addEventListener("click", login);
+  //register button 
+document.getElementById("registerBtn")?.addEventListener("click", register);
   // Profile page redirect
   document.getElementById("profileBtn")?.addEventListener("click", () => {
     window.location.href = "/profile/profile.html";
@@ -127,6 +128,29 @@ function login() {
   .catch(err => {
     console.error(err);
     alert("Login failed");
+  });
+}
+
+// ================= REGISTER =================
+function register() {
+  fetch("http://localhost:8080/api/users/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name: document.getElementById("name").value,
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert("Registered successfully! Now login.");
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Registration failed");
   });
 }
 // ================= PROFILE =================
