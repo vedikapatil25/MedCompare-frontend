@@ -93,7 +93,17 @@ function getImgSrc(item) {
     ? `${BASE_URL}${item.imageUrl}`
     : makePlaceholder(item.name);
 }
-
+function timeAgo(dateStr) {
+  if (!dateStr) return null;
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins  = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days  = Math.floor(diff / 86400000);
+  if (mins  < 1)   return "just now";
+  if (mins  < 60)  return `${mins} minute${mins > 1 ? "s" : ""} ago`;
+  if (hours < 24)  return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+  return `${days} day${days > 1 ? "s" : ""} ago`;
+}
 // ── Modal ─────────────────────────────────────────────────────────────────────
 function openModal(item) {
   const allPrices = [
@@ -138,6 +148,7 @@ function openModal(item) {
   const imgSrc = getImgSrc(item);
   const desc = (item.desc || item.description || "").slice(0, 160).trim();
   const shortDesc = desc.length === 160 ? desc + "…" : desc;
+  const updatedAgo = timeAgo(item.priceUpdatedAt);
 
   document.getElementById("modalBody").innerHTML = `
     <div class="mc-modal-header">
@@ -155,13 +166,35 @@ function openModal(item) {
           <span class="mc-price-range-label">Price range</span>
           <span class="mc-price-range-value">₹${lowestPrice} – ₹${highestPrice}</span>
         </div>
-      </div>
+        ${updatedAgo ? `
+          <div class="mc-price-updated">
+           <i class="ti ti-clock" aria-hidden="true"></i>
+           Prices updated <strong>${updatedAgo}</strong>
+           </div>` : ""}
+        </div>
     </div>
 
-    <div class="mc-store-list">
+   <div class="mc-store-list">
       ${rows}
     </div>
 
+    <div id="mc-price-chart" style="
+      background:#111e34;
+      border-radius:10px;
+      padding:14px 16px;
+      margin-top:10px;
+      border:1px solid #1e3050;
+    "></div>
+<div class="mc-alert-section">
+  <button 
+    class="mc-alert-btn" 
+    id="alertBtn"
+    onclick="handleAlertSubscribe(${item.id}, '${item.name}')">
+    <i class="ti ti-bell" aria-hidden="true"></i>
+    Alert me when price drops
+  </button>
+  <span id="alertStatus" style="font-size:13px; color: var(--color-text-secondary);"></span>
+</div>
     ${savings > 0 ? `
     <div class="mc-savings-tip">
       <i class="ti ti-tag" aria-hidden="true"></i>
@@ -173,7 +206,48 @@ function openModal(item) {
   const tip = document.getElementById("lowestPriceTip");
   if (tip) tip.textContent = "";
 
-  document.getElementById("modal").style.display = "flex";
+document.getElementById("modal").style.display = "flex";
+renderPriceChart(sorted, lowestPrice, highestPrice); // ← add this  
+}
+
+function renderPriceChart(prices, lowestPrice, highestPrice) {
+  const chartContainer = document.getElementById("mc-price-chart");
+  if (!chartContainer) return;
+
+  const range = highestPrice - lowestPrice || 1; // avoid divide by zero
+
+  const bars = prices.map(p => {
+    const isBest = p.price === lowestPrice;
+    // Bar width: min 40%, scales up to 100% for highest price
+    const fillPct = 40 + ((p.price - lowestPrice) / range) * 60;
+
+    return `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;">
+        <span style="font-size:12px;color:#8a9bba;width:85px;flex-shrink:0;text-align:right;">
+          ${p.store}
+        </span>
+        <div style="flex:1;height:26px;background:#1a2c47;border-radius:5px;overflow:hidden;">
+          <div style="
+            width:${fillPct}%;
+            height:100%;
+            border-radius:5px;
+            background:${isBest ? '#1a5c32' : '#1a3a5c'};
+            display:flex;align-items:center;padding-left:10px;
+            font-size:12px;font-weight:700;
+            color:${isBest ? '#2ecc71' : '#4a90d9'};
+            transition:width 0.5s ease;
+          ">₹${p.price}</div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  chartContainer.innerHTML = `
+    <p style="font-size:11px;color:#5a6e8a;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 12px;font-weight:500;">
+      Price comparison
+    </p>
+    ${bars}
+  `;
 }
 // ── Search & filter ───────────────────────────────────────────────────────────
 function filterMedicines(query) {
@@ -211,194 +285,85 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadAllMedicines();
 });
-// const toggleBtn = document.getElementById("toggleMode");
-// const img1      = document.querySelector("#img1");
-// const img2      = document.querySelector("#img2");
-// const carousel  = document.querySelector(".carousel");
-// const nextBtn   = document.querySelector(".next-btn");
-// const prevBtn   = document.querySelector(".prev-btn");
+// ------------------ PRICE DROP ALERT ------------------
+async function handleAlertSubscribe(medicineId, medicineName) {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    document.getElementById("alertStatus").textContent = "Please login to set alerts.";
+    return;
+  }
 
-// // ── Dark/light toggle ─────────────────────────────────────────────────────────
-// toggleBtn.addEventListener("click", () => {
-//   document.body.classList.toggle("light-mode");
-// });
+  const btn = document.getElementById("alertBtn");
+  btn.disabled = true;
+  btn.innerHTML = `<i class="ti ti-loader" aria-hidden="true"></i> Setting alert...`;
 
-// // ── Carousel image links ──────────────────────────────────────────────────────
-// img1.addEventListener("click", () => {
-//   window.location.href = "https://pharmeasy.in/health-care/14485";
-// });
-// img2.addEventListener("click", () => {
-//   window.location.href = "https://pharmeasy.in/health-care/16202";
-// });
+  try {
+    const res = await fetch("http://localhost:8080/api/alerts/subscribe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({ medicineId })
+    });
 
-// // ── Carousel scroll ───────────────────────────────────────────────────────────
-// nextBtn.addEventListener("click", () => carousel.scrollBy({ left: 500, behavior: "smooth" }));
-// prevBtn.addEventListener("click", () => carousel.scrollBy({ left: -500, behavior: "smooth" }));
+    const data = await res.json();
 
-// // ── Data store ────────────────────────────────────────────────────────────────
-// let allMedicines = [];
+    if (res.ok) {
+      btn.innerHTML = `<i class="ti ti-bell-check" aria-hidden="true"></i> Alert set!`;
+      btn.style.background = "#1a5c32";
+      btn.style.color = "#2ecc71";
+      document.getElementById("alertStatus").textContent =
+        `You'll get an email when ${medicineName} price drops.`;
+    } else if (res.status === 409) {
+      // Already subscribed
+      btn.innerHTML = `<i class="ti ti-bell-off" aria-hidden="true"></i> Remove alert`;
+      btn.disabled = false;
+      btn.onclick = () => handleAlertUnsubscribe(medicineId);
+      document.getElementById("alertStatus").textContent = "Already watching this medicine.";
+    } else {
+      throw new Error(data.message || "Failed");
+    }
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="ti ti-bell" aria-hidden="true"></i> Alert me when price drops`;
+    document.getElementById("alertStatus").textContent = "Something went wrong. Try again.";
+  }
+}
 
-// async function loadAllMedicines() {
-//   try {
-//     const res = await fetch("http://localhost:8080/api/medicines");
-//     if (!res.ok) throw new Error("Server error");
-//     const data = await res.json();
-//     allMedicines = data.data || data;
-//   } catch {
-//     // Mock data – remove once your real API works
-//     allMedicines = [
-//       { name: "Paracetamol",            description: "Common painkiller and fever reducer.",         onemgPrice: 12,  apolloPrice: 13,  pharmeasyPrice: 11,   onemgUrl: "#", apolloUrl: "#", pharmeasyUrl: "#" },
-//       { name: "Dolo 650",               description: "Paracetamol 650mg tablet for fever relief.",   onemgPrice: 30,  apolloPrice: 28,  pharmeasyPrice: 27,   onemgUrl: "#", apolloUrl: "#", pharmeasyUrl: "#" },
-//       { name: "Azithromycin",           description: "Antibiotic used to treat bacterial infections.",onemgPrice: 85,  apolloPrice: 90,  pharmeasyPrice: 82,   onemgUrl: "#", apolloUrl: "#", pharmeasyUrl: "#" },
-//       { name: "Amoxicillin",            description: "Penicillin antibiotic for various infections.", onemgPrice: 55,  apolloPrice: 58,  pharmeasyPrice: 52,   onemgUrl: "#", apolloUrl: "#", pharmeasyUrl: "#" },
-//       { name: "Ibuprofen",              description: "Anti-inflammatory for pain and fever.",         onemgPrice: 22,  apolloPrice: 24,  pharmeasyPrice: 21,   onemgUrl: "#", apolloUrl: "#", pharmeasyUrl: "#" },
-//       { name: "Cetirizine",             description: "Antihistamine for allergies and hay fever.",    onemgPrice: 18,  apolloPrice: 20,  pharmeasyPrice: 17,   onemgUrl: "#", apolloUrl: "#", pharmeasyUrl: "#" },
-//       { name: "Metformin",              description: "Used to control blood sugar in type 2 diabetes.",onemgPrice: 40, apolloPrice: 42,  pharmeasyPrice: 38,   onemgUrl: "#", apolloUrl: "#", pharmeasyUrl: "#" },
-//       { name: "Omeprazole",             description: "Reduces stomach acid for acidity relief.",      onemgPrice: 60,  apolloPrice: 65,  pharmeasyPrice: 58,   onemgUrl: "#", apolloUrl: "#", pharmeasyUrl: "#" },
-//       { name: "Dabur Red Chyawanprash", description: "Ayurvedic immunity booster with herbs.",       onemgPrice: 89,  apolloPrice: 99,  pharmeasyPrice: 79.2, onemgUrl: "#", apolloUrl: "#", pharmeasyUrl: "#" },
-//       { name: "Jiva Triphala Tablet",   description: "Digestive and detox ayurvedic supplement.",    onemgPrice: 214, apolloPrice: 110, pharmeasyPrice: 207,  onemgUrl: "#", apolloUrl: "#", pharmeasyUrl: "#" },
-//       { name: "Dabur Tulsi Drop",       description: "Immunity & respiratory health support.",        onemgPrice: 182, apolloPrice: 146, pharmeasyPrice: 121,  onemgUrl: "#", apolloUrl: "#", pharmeasyUrl: "#" },
-//     ];
-//   }
-// }
+async function handleAlertUnsubscribe(medicineId) {
+  const token = localStorage.getItem("token");
+  const btn = document.getElementById("alertBtn");
+  btn.disabled = true;
 
-// // ── Render cards (same structure as ayurvedic section) ────────────────────────
-// function displayMedicines(medicines) {
-//   const container = document.getElementById("medicineList");
-//   container.innerHTML = "";
+  try {
+    await fetch("http://localhost:8080/api/alerts/unsubscribe", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({ medicineId })
+    });
 
-//   if (!medicines || medicines.length === 0) {
-//     container.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:#aaa;padding:40px 0;">No medicines found. Try a different name.</p>`;
-//     return;
-//   }
+    btn.innerHTML = `<i class="ti ti-bell" aria-hidden="true"></i> Alert me when price drops`;
+    btn.disabled = false;
+    btn.onclick = () => handleAlertSubscribe(medicineId);
+    document.getElementById("alertStatus").textContent = "Alert removed.";
+  } catch (err) {
+    btn.disabled = false;
+    document.getElementById("alertStatus").textContent = "Could not remove alert.";
+  }
+}
+// ── FAQ Toggle ────────────────────────────────────────────────────────────────
+function toggleFaq(btn) {
+  const item = btn.closest(".faq-item");
+  const isOpen = item.classList.contains("open");
 
-//   medicines.forEach(item => {
-//     // const imgSrc = item.image || item.imageUrl ||
-//     //   `https://placehold.co/250x180/eef2ff/4361ee?text=${encodeURIComponent(item.name.split(" ")[0])}`;
-//   const imgSrc = item.imageUrl
-//   ? `http://localhost:8080${item.imageUrl}`
-//   : makePlaceholder(item.name);
+  // close all open items first
+  document.querySelectorAll(".faq-item.open").forEach(el => el.classList.remove("open"));
 
-//     const card = document.createElement("div");
-//     card.className = "product-card";           // ← same class as ayurvedic section
-//     card.innerHTML = `
-//       <img
-//         src="${imgSrc}"
-//         alt="${item.name}"
-//         onerror="this.src='https://placehold.co/250x180/eef2ff/4361ee?text=Medicine'"
-//       >
-//       <h3>${item.name}</h3>
-//       <p>${item.description || ""}</p>
-//       <div class="product-card-price">From ₹${Math.min(
-//         item.onemgPrice     || Infinity,
-//         item.apolloPrice    || Infinity,
-//         item.pharmeasyPrice || Infinity
-//       )}</div>
-//       <button class="compare-btn">Compare Prices</button>
-//     `;
+  // if it wasn't open, open it
+  if (!isOpen) item.classList.add("open");
+}
 
-//     // Open modal on card click (same behaviour as ayurvedic section)
-//     card.addEventListener("click", () => openModal(item));
-
-//     container.appendChild(card);
-//   });
-// }
-
-// // ── Modal ─────────────────────────────────────────────────────────────────────
-// function openModal(item) {
-//   const prices = [
-//     { store: "1mg",       price: item.onemgPrice,     url: item.onemgUrl     || `https://www.1mg.com/search/all?name=${encodeURIComponent(item.name)}`     },
-//     { store: "Apollo",    price: item.apolloPrice,    url: item.apolloUrl    || `https://www.apollopharmacy.in/search-medicines/${encodeURIComponent(item.name)}` },
-//     { store: "Pharmeasy", price: item.pharmeasyPrice, url: item.pharmeasyUrl || `https://pharmeasy.in/search/all?name=${encodeURIComponent(item.name)}`    },
-//   ].filter(p => p.price != null && p.price !== "N/A");
-
-//   const lowestPrice = Math.min(...prices.map(p => p.price));
-
-//   // Build table rows – highlight lowest row (same as ayurvedic section)
-//   const rows = prices.map(p => `
-//     <tr class="${p.price === lowestPrice ? "lowest-row" : ""}">
-//       <td>${p.store}</td>
-//       <td>₹${p.price}</td>
-//       <td><a href="${p.url}" target="_blank" class="buy-btn">Buy Now</a></td>
-//     </tr>
-//   `).join("");
-
-//   // const imgSrc = item.image || item.imageUrl ||
-//   //   `https://placehold.co/250x180/eef2ff/4361ee?text=${encodeURIComponent(item.name.split(" ")[0])}`;
-// const imgSrc = item.imageUrl
-//   ? `http://localhost:8080${item.imageUrl}`
-//   : makePlaceholder(item.name);
-
-//   document.getElementById("modalBody").innerHTML = `
-//     <div class="product-desc">
-//       <img src="${imgSrc}" alt="${item.name}"
-//            style="width:200px;height:180px;object-fit:contain;"
-//            onerror="this.src='https://placehold.co/200x180/eef2ff/4361ee?text=Medicine'">
-//       <h2>${item.name}</h2>
-//     </div>
-//     <p class="modal-desc">${item.description || ""}</p>
-//     <table class="store-table">
-//       <thead>
-//         <tr>
-//           <th>Store</th>
-//           <th>Price</th>
-//           <th>Link</th>
-//         </tr>
-//       </thead>
-//       <tbody>${rows}</tbody>
-//     </table>
-//   `;
-
-//   const lowestStore = prices.find(p => p.price === lowestPrice);
-//   document.getElementById("lowestPriceTip").textContent =
-//     lowestStore ? `✅ Best deal: ₹${lowestPrice} on ${lowestStore.store}` : "";
-
-//   document.getElementById("modal").style.display = "flex";
-// }
-
-// // ── Search & filter ───────────────────────────────────────────────────────────
-// function filterMedicines(query) {
-//   const section = document.querySelector(".popular");
-
-//   if (!query) {
-//     document.getElementById("medicineList").innerHTML = "";
-//     section.style.display = "none";
-//     return;
-//   }
-
-//   const results = allMedicines.filter(item =>
-//     item.name.toLowerCase().includes(query.toLowerCase())
-//   );
-
-//   section.style.display = "block";
-//   displayMedicines(results);
-// }
-
-// // ── Boot ──────────────────────────────────────────────────────────────────────
-// document.addEventListener("DOMContentLoaded", () => {
-//   const searchInput = document.getElementById("searchInput");
-//   const searchBtn   = document.getElementById("searchBtn");
-
-//   // Hide popular section until user searches
-//   document.querySelector(".popular").style.display = "none";
-
-//   // Close modal
-//   document.getElementById("closeModal").addEventListener("click", () => {
-//     document.getElementById("modal").style.display = "none";
-//   });
-//   document.getElementById("modal").addEventListener("click", e => {
-//     if (e.target === document.getElementById("modal")) {
-//       document.getElementById("modal").style.display = "none";
-//     }
-//   });
-
-//   searchBtn.addEventListener("click", () => filterMedicines(searchInput.value.trim()));
-
-//   searchInput.addEventListener("keydown", e => {
-//     if (e.key === "Enter") filterMedicines(searchInput.value.trim());
-//   });
-
-//   searchInput.addEventListener("input", () => filterMedicines(searchInput.value.trim()));
-
-//   loadAllMedicines();
-// });

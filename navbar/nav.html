@@ -6,236 +6,428 @@
     <title>Document</title>
     <style>
         /* --- Navbar --- */
-nav{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:20px 50px;
-  background:#1e293b;
-  box-shadow:0 2px 6px rgba(0,0,0,0.3);
-}
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: #1e293b;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
 
-.logo{
-  color:#60a5fa;
-  font-size:22px;
-  /* font-weight:600; */
-}
+        .logo {
+            color: #60a5fa;
+            font-size: 22px;
+        }
 
-nav ul{
-  display:flex;
-  align-items:center;
-  gap:25px;
-  list-style:none;
-}
-nav a {
-  color: #e2e8f0;
-  text-decoration: none;
-}
-nav a:hover {
-  color:#38bdf8;
-}
-body.light-mode a {
-  color :#1e293b;
-}
-body.light-mode a:hover {
-  color :#38bdf8;
-}
-nav li{
-  cursor:pointer;
-  transition:color 0.3s;
-}
+        nav ul {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            list-style: none;
+        }
 
-nav li:hover{
-  color:#38bdf8;
-}
+        nav a {
+            color: #e2e8f0;
+            text-decoration: none;
+        }
 
-.loginBtn{
-  padding:8px 15px;
-  border:none;
-  background:#3b82f6;
-  color:white;
-  border-radius:6px;
-  cursor:pointer;
-}
-/* ----------------------------------
-   BLUR OVERLAY
----------------------------------- */
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(8px);
-  background: rgba(0,0,0,0.4);
-  display: none;
-  z-index: 10;
-}
+        nav a:hover {
+            color: #38bdf8;
+        }
 
-/* ----------------------------------
-   LOGIN POPUP
----------------------------------- */
-.login-popup {
-  width: 60%;
-  max-width: 850px;
-  background: white;
-  border-radius: 15px;
-  display: flex;
-  gap: 20px;
-  padding: 20px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: none;
-  z-index: 20;
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);
-}
+        body.light-mode a {
+            color: #1e293b;
+        }
 
-/* Left side */
-.left-box {
-  width: 45%;
-  background: #1e3a8a;
-  color: white;
-  padding: 25px;
-  border-radius: 12px;
-}
+        body.light-mode a:hover {
+            color: #38bdf8;
+        }
 
-.left-box span {
-  font-size: 40px;
-  font-weight: bold;
-}
+        nav li {
+            cursor: pointer;
+            transition: color 0.3s;
+        }
 
-.left-box img {
-  width: 100%;
-  margin-top: 20px;
-}
+        nav li:hover {
+            color: #38bdf8;
+        }
 
-/* Right side */
-.right-box {
-  color: #0f172a;
-  width: 55%;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  padding-top: 10px;
-}
-#userBtn {
-  background: #1e293b;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-}
+        .loginBtn {
+            padding: 8px 15px;
+            border: none;
+            background: #3b82f6;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
 
-#dropdownMenu p {
-  margin: 5px 0;
-  cursor: pointer;
-}
+        /* ----------------------------------
+           BLUR OVERLAY
+        ---------------------------------- */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.4);
+            display: none;
+            z-index: 10;
+        }
 
-#dropdownMenu p:hover {
-  color: #2563eb;
-}
+        /* ----------------------------------
+           LOGIN POPUP
+        ---------------------------------- */
+        .login-popup {
+            width: 60%;
+            max-width: 850px;
+            background: white;
+            border-radius: 15px;
+            display: none;
+            gap: 20px;
+            padding: 20px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
 
-.right-box input {
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-}
+        /* Left side */
+        .left-box {
+            width: 45%;
+            background: #1e3a8a;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
 
-.otp-btn {
-  padding: 12px;
-  background: #1e3a8a;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 17px;
-}
-/* Profile Icon */
+        .left-box span {
+            font-size: 40px;
+            font-weight: bold;
+            color: #60a5fa;
+        }
 
-.profile-icon {
-  width: 35px;
-  height: 35px;
-  background: #3b82f6;
-  color: white;
-  border-radius: 50%;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-}
-#adminBtn {
+        .left-box img {
+            width: 100%;
+            margin-top: 20px;
+        }
 
-  background: #3b82f6;
-  color: white;
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
+        /* Feature cards inside left box */
+        .feature-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
 
-#adminBtn:hover {
-  background: #1d4ed8;
-}
+        .feature-card .icon {
+            font-size: 18px;
+            margin-top: 2px;
+        }
 
+        .feature-card h4 {
+            margin: 0 0 3px 0;
+            font-size: 14px;
+        }
+
+        .feature-card p {
+            margin: 0;
+            font-size: 12px;
+            color: #93c5fd;
+        }
+
+        .pharmacy-tags {
+            margin-top: 16px;
+        }
+
+        .pharmacy-tags p {
+            font-size: 12px;
+            color: #93c5fd;
+            margin-bottom: 6px;
+        }
+
+        .tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+          
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding-left: 6px;
+            padding-right: 6px;
+        }
+
+        /* Right side */
+        .right-box {
+            color: #0f172a;
+            width: 55%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-top: 10px;
+        }
+
+        /*  Toggle Buttons - Login / Register */
+        .toggle-btns {
+            display: flex;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .toggle-btns button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: #f1f5f9;
+            color: #6b7280;
+            border-right: 1px solid #d1d5db;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.25s, color 0.25s;
+        }
+
+        /*  Active state — blue background */
+        .toggle-btns button.active {
+            background: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        .toggle-btns button:not(.active):hover {
+            background: #f1f5f9;
+        }
+
+        /* Input fields */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-label {
+            font-size: 13px;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .right-box input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 15px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .right-box input:focus {
+            border-color: #3b82f6;
+        }
+
+        /* Password wrapper */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            width: 100%;
+            box-sizing: border-box;
+            padding-right: 44px;
+        }
+
+        .toggle-eye {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #6b7280;
+        }
+
+        .forgot-link {
+            text-align: right;
+            font-size: 13px;
+            color: #3b82f6;
+            cursor: pointer;
+            margin-top: -8px;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Name field - only show in Register mode */
+        #nameGroup {
+            display: none;
+        }
+
+        /* Submit button */
+        .otp-btn {
+            padding: 12px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 17px;
+            transition: background 0.2s;
+        }
+
+        .otp-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .secure-note {
+            font-size: 11px;
+            color: #9ca3af;
+            text-align: center;
+        }
+
+        /* Profile Icon */
+        .profile-icon {
+            width: 35px;
+            height: 35px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 50%;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        #adminBtn {
+            background: #3b82f6;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        #adminBtn:hover {
+            background: #1d4ed8;
+        }
     </style>
 </head>
 <body>
     <!-- Navbar -->
-  <nav>
-    <h2 class="logo">MedCompare</h2>
-    <ul>
-      <li><a href="../homepage/index.html">Home</a></li>
-      <li><a href="../medicine/index.html">Medicines</a></li>
-      <!-- <li><a href="../labtests/index.html">Lab Tests</a></li> -->
-      <li><a href="../footer/about.html">About</a></li>
-      <li><button class="loginBtn" id="openPopup">Login</button></li>
+    <nav>
+        <h2 class="logo">MedCompare</h2>
+        <ul>
+            <li><a href="../homepage/index.html">Home</a></li>
+            <li><a href="../medicine/index.html">Medicines</a></li>
+            <li><a href="../footer/about.html">About</a></li>
+            <li><button class="loginBtn" id="openPopup">Login</button></li>
 
-  <!-- Profile Icon -->
+            <!-- Profile Icon -->
+            <li id="profileNav" style="display:none;">
+                <button id="profileBtn" class="profile-icon">👤</button>
+            </li>
 
-  <li id="profileNav" style="display:none;">
-  <button id="profileBtn" class="profile-icon">👤</button>
-</li>
-<!-- ✅ ADMIN BUTTON -->
-  <li>
-    <button id="adminBtn" style="display:none;">Admin</button>
-  </li>
+            <!-- Admin Button -->
+            <li>
+                <button id="adminBtn" style="display:none;">Admin</button>
+            </li>
+        </ul>
+    </nav>
 
-</li>
- </ul>
-  </nav>
-  <!-- BLUR OVERLAY -->
-  <div class="overlay" id="overlay"></div>
+    <!-- BLUR OVERLAY -->
+    <div class="overlay" id="overlay"></div>
 
-  <!-- LOGIN POPUP -->
-  <div class="login-popup" id="loginPopup">
-    <div class="left-box">
-      <h2>Save Upto <span>51%</span></h2>
-      <p>on medicines with Branded Substitutes</p>
-      <img src="doctor.png" alt="Doctor Image">
+    <!-- LOGIN POPUP -->
+    <div class="login-popup" id="loginPopup">
+
+        <!-- Left Box -->
+        <div class="left-box">
+            <h2>Save Up to <span>20%</span></h2>
+            <p style="font-size:13px; color:#93c5fd; margin-top:4px;">on medicines with branded substitutes</p>
+
+            <div class="feature-card">
+                <div class="icon">🔖</div>
+                <div>
+                    <h4>Compare medicine prices</h4>
+                    <p>Across top pharmacies instantly</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">🏷️</div>
+                <div>
+                    <h4>Best price guarantee</h4>
+                    <p>We find the lowest price for you</p>
+                </div>
+            </div>
+
+            <div class="pharmacy-tags">
+                <p>Prices compared from</p>
+                <div class="tags">
+                    <span class="tag">Apollo</span>
+                    <span class="tag">PharmEasy</span>
+                    <span class="tag">1mg</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Box -->
+        <div class="right-box">
+            <h2 style="margin:0;">MedCompare</h2>
+
+            <!--  Login / Register Toggle Buttons -->
+            <div class="toggle-btns">
+                <button id="loginTab" class="active" onclick="switchMode('login')">Login</button>
+                <button id="registerTab" onclick="switchMode('register')">Register</button>
+            </div>
+
+            <!-- Name field (Register only) -->
+            <div class="input-group" id="nameGroup">
+                <span class="input-label"> Full Name</span>
+                <input type="text" id="name" placeholder="Enter your name">
+            </div>
+
+            <!-- Email -->
+            <div class="input-group">
+                <span class="input-label"> Email address</span>
+                <input type="email" id="email" placeholder="you@example.com">
+            </div>
+
+            <!-- Password -->
+            <div class="input-group">
+                <span class="input-label"> Password</span>
+                <div class="password-wrapper">
+                    <input type="password" id="password" placeholder="Enter your password">
+                    <button class="toggle-eye" onclick="togglePassword()" id="eyeBtn">👁️</button>
+                </div>
+            </div>
+
+            <!-- <div class="forgot-link" id="forgotLink">Forgot password?</div> -->
+            <div class="forgot-link" id="forgotLink">
+              Forgot password?
+            </div>
+            <!-- Submit Button -->
+            <button class="otp-btn" id="loginBtn">Login</button>
+
+            <p class="secure-note">🔐 Protected by secure JWT authentication. Your data is never shared.</p>
+        </div>
     </div>
-
-    <div class="right-box">
-      <h2>MedCompare</h2>
-      <p>Login / Signup</p>
-      
-      <input type="text" id="name" placeholder="Enter name"><br><br>
-      <input type="email" id="email" placeholder="Enter email"><br><br>
-      <input type="password" id="password" placeholder="Enter password"><br><br>
-      <button class="otp-btn" id="loginBtn">Login</button>
-      <button class="otp-btn" id="registerBtn">Register</button>      <!-- <button class="otp-btn">Get OTP</button> -->
-      <label>
-        <input type="checkbox" checked>
-        I agree to the <a href="#">Terms & Conditions</a>
-      </label>
-    </div>
-    
-    
-   <!-- <script src = "nav.js"></script> -->
-
 
 </body>
 </html>

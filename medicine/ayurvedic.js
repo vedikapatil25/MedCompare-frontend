@@ -259,9 +259,21 @@ function getImgSrc(item) {
     ? `${BASE_URL}${item.imageUrl}`
     : makePlaceholder(item.name);
 }
-
+function timeAgo(dateStr) {
+  if (!dateStr) return null;
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins  = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days  = Math.floor(diff / 86400000);
+  if (mins  < 1)   return "just now";
+  if (mins  < 60)  return `${mins} minute${mins > 1 ? "s" : ""} ago`;
+  if (hours < 24)  return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+  return `${days} day${days > 1 ? "s" : ""} ago`;
+}
 // ── Modal ─────────────────────────────────────────────────────────────────────
 function openModal(item) {
+    console.log("Medicine data:", item);  // ← add this
+
   const allPrices = [
     { store: "1mg",       price: item.onemgPrice,     url: item.onemgUrl     || `https://www.1mg.com/search/all?name=${encodeURIComponent(item.name)}`                },
     { store: "Apollo",    price: item.apolloPrice,    url: item.apolloUrl    || `https://www.apollopharmacy.in/search-medicines/${encodeURIComponent(item.name)}`   },
@@ -304,6 +316,7 @@ function openModal(item) {
   const imgSrc = getImgSrc(item);
   const desc = (item.desc || item.description || "").slice(0, 160).trim();
   const shortDesc = desc.length === 160 ? desc + "…" : desc;
+const updatedAgo = timeAgo(item.priceUpdatedAt);
 
   document.getElementById("modalBody").innerHTML = `
     <div class="mc-modal-header">
@@ -321,13 +334,35 @@ function openModal(item) {
           <span class="mc-price-range-label">Price range</span>
           <span class="mc-price-range-value">₹${lowestPrice} – ₹${highestPrice}</span>
         </div>
+        ${updatedAgo ? `
+        <div class="mc-price-updated">
+          <i class="ti ti-clock" aria-hidden="true"></i>
+          Prices updated <strong>${updatedAgo}</strong>
+        </div>` : ""}
       </div>
     </div>
 
-    <div class="mc-store-list">
+ <div class="mc-store-list">
       ${rows}
     </div>
 
+    <div id="mc-price-chart" style="
+      background:#111e34;
+      border-radius:10px;
+      padding:14px 16px;
+      margin-top:10px;
+      border:1px solid #1e3050;
+    "></div>
+<div class="mc-alert-section">
+  <button 
+    class="mc-alert-btn" 
+    id="alertBtn"
+    onclick="handleAlertSubscribe(${item.id}, '${item.name}')">
+    <i class="ti ti-bell" aria-hidden="true"></i>
+    Alert me when price drops
+  </button>
+  <span id="alertStatus" style="font-size:13px; color: var(--color-text-secondary);"></span>
+</div>
     ${savings > 0 ? `
     <div class="mc-savings-tip">
       <i class="ti ti-tag" aria-hidden="true"></i>
@@ -340,8 +375,48 @@ function openModal(item) {
   if (tip) tip.textContent = "";
 
   document.getElementById("modal").style.display = "flex";
+  renderPriceChart(sorted, lowestPrice, highestPrice); 
 }
 
+function renderPriceChart(prices, lowestPrice, highestPrice) {
+  const chartContainer = document.getElementById("mc-price-chart");
+  if (!chartContainer) return;
+
+  const range = highestPrice - lowestPrice || 1; // avoid divide by zero
+
+  const bars = prices.map(p => {
+    const isBest = p.price === lowestPrice;
+    // Bar width: min 40%, scales up to 100% for highest price
+    const fillPct = 40 + ((p.price - lowestPrice) / range) * 60;
+
+    return `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;">
+        <span style="font-size:12px;color:#8a9bba;width:85px;flex-shrink:0;text-align:right;">
+          ${p.store}
+        </span>
+        <div style="flex:1;height:26px;background:#1a2c47;border-radius:5px;overflow:hidden;">
+          <div style="
+            width:${fillPct}%;
+            height:100%;
+            border-radius:5px;
+            background:${isBest ? '#1a5c32' : '#1a3a5c'};
+            display:flex;align-items:center;padding-left:10px;
+            font-size:12px;font-weight:700;
+            color:${isBest ? '#2ecc71' : '#4a90d9'};
+            transition:width 0.5s ease;
+          ">₹${p.price}</div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  chartContainer.innerHTML = `
+    <p style="font-size:11px;color:#5a6e8a;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 12px;font-weight:500;">
+      Price comparison
+    </p>
+    ${bars}
+  `;
+}
     // function buildRow(storeName, storeObj) {
     //   if (!storeObj) {
     //     return `<tr><td>${storeName}</td><td>N/A</td><td>-</td></tr>`;
@@ -410,3 +485,73 @@ function openModal(item) {
     // Helpful: initial focus on search
     searchInput.focus();
     loadProducts("ayurvedic");
+    // ------------------ PRICE DROP ALERT ------------------
+async function handleAlertSubscribe(medicineId, medicineName) {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    document.getElementById("alertStatus").textContent = "Please login to set alerts.";
+    return;
+  }
+
+  const btn = document.getElementById("alertBtn");
+  btn.disabled = true;
+  btn.innerHTML = `<i class="ti ti-loader" aria-hidden="true"></i> Setting alert...`;
+
+  try {
+    const res = await fetch("http://localhost:8080/api/alerts/subscribe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({ medicineId })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      btn.innerHTML = `<i class="ti ti-bell-check" aria-hidden="true"></i> Alert set!`;
+      btn.style.background = "#1a5c32";
+      btn.style.color = "#2ecc71";
+      document.getElementById("alertStatus").textContent =
+        `You'll get an email when ${medicineName} price drops.`;
+    } else if (res.status === 409) {
+      // Already subscribed
+      btn.innerHTML = `<i class="ti ti-bell-off" aria-hidden="true"></i> Remove alert`;
+      btn.disabled = false;
+      btn.onclick = () => handleAlertUnsubscribe(medicineId);
+      document.getElementById("alertStatus").textContent = "Already watching this medicine.";
+    } else {
+      throw new Error(data.message || "Failed");
+    }
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="ti ti-bell" aria-hidden="true"></i> Alert me when price drops`;
+    document.getElementById("alertStatus").textContent = "Something went wrong. Try again.";
+  }
+}
+
+async function handleAlertUnsubscribe(medicineId) {
+  const token = localStorage.getItem("token");
+  const btn = document.getElementById("alertBtn");
+  btn.disabled = true;
+
+  try {
+    await fetch("http://localhost:8080/api/alerts/unsubscribe", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({ medicineId })
+    });
+
+    btn.innerHTML = `<i class="ti ti-bell" aria-hidden="true"></i> Alert me when price drops`;
+    btn.disabled = false;
+    btn.onclick = () => handleAlertSubscribe(medicineId);
+    document.getElementById("alertStatus").textContent = "Alert removed.";
+  } catch (err) {
+    btn.disabled = false;
+    document.getElementById("alertStatus").textContent = "Could not remove alert.";
+  }
+}

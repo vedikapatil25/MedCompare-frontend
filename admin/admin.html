@@ -19,6 +19,9 @@
       background: #1e293b;
       padding: 20px;
       height: 100vh;
+      position: sticky;
+      top: 0;
+
     }
 
     .sidebar h2 {
@@ -48,6 +51,119 @@
       border-radius: 10px;
       margin-top: 20px;
     }
+     /* ── Edit Modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 32px;
+      width: 420px;
+      position: relative;
+    }
+
+    .modal h3 {
+      margin: 0 0 20px;
+      font-size: 1.2rem;
+      color: #60a5fa;
+    }
+
+    .modal label {
+      display: block;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+
+    .modal input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: white;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+    }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 4px; }
+
+    .btn-save {
+      flex: 1;
+      padding: 10px;
+      background: #22c55e;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 10px;
+      background: #334155;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 14px; right: 16px;
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+
+    /* Table helpers */
+    .badge-updated {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .btn-edit {
+      background: #f59e0b;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 6px;
+    }
+
+    .btn-delete {
+      background: #ef4444;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    th { padding: 10px; text-align: left; color: #94a3b8; font-size: 0.85rem; }
+    td { padding: 10px; border-bottom: 1px solid #1e293b; vertical-align: middle; }
+
+    .section { display: none; }
+    #section-dashboard { display: block; }
+
   </style>
 </head>
 
@@ -55,127 +171,346 @@
 
   <div class="sidebar">
     <h2>Admin Panel</h2>
-    <button onclick="logout()">Logout</button>
+    <button onclick="showSection('dashboard')">Dashboard</button>
+    <button onclick="showSection('medicines')">Medicines</button>
+    <button onclick="showSection('users')">Users</button>
+    <button onclick="logout()" style="background:#ef4444; margin-top: 40px;">Logout</button>
   </div>
 
-  <div class="main">
-    <h1>Welcome Admin 👋</h1>
-
-    <div class="card">
-      <p id="email"></p>
-      <p id="role"></p>
+  <div id="section-dashboard" class="section">
+  <h1>Welcome Admin</h1>
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;">
+    <div class="card" style="text-align:center;">
+      <h2 id="totalUsers">—</h2>
+      <p>Total Users</p>
     </div>
-
-    <div class="card">
-  <h3>All Users</h3>
-
-  <table border="1" width="100%" style="margin-top:10px;">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-
-    <tbody id="userTable">
-      <!-- Data will come here -->
-    </tbody>
-  </table>
-
-</div>
+    <div class="card" style="text-align:center;">
+      <h2 id="totalMedicines">—</h2>
+      <p>Total Medicines</p>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h2 id="adminEmail">—</h2>
+      <p>Logged in as</p>
+    </div>
   </div>
+</div>
+  
+<div id="section-medicines" class="section" style="display:none;">
+  <h1>Manage Medicines</h1>
+
+  <!-- Add medicine form -->
+  <div class="card">
+    <h3>Add New Medicine</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
+      <input id="med-name"     placeholder="Medicine name"       style="padding:10px; border-radius:6px; border:none; background:#0f172a; color:white;">
+      <input id="med-salt"     placeholder="Salt composition"    style="padding:10px; border-radius:6px; border:none; background:#0f172a; color:white;">
+      <input id="med-desc"     placeholder="Description"         style="padding:10px; border-radius:6px; border:none; background:#0f172a; color:white;">
+      <input id="med-category" placeholder="Category (e.g. ayurvedic)" style="padding:10px; border-radius:6px; border:none; background:#0f172a; color:white;">
+      <input id="med-1mg"      placeholder="1mg price"      type="number" style="padding:10px; border-radius:6px; border:none; background:#0f172a; color:white;">
+      <input id="med-apollo"   placeholder="Apollo price"   type="number" style="padding:10px; border-radius:6px; border:none; background:#0f172a; color:white;">
+      <input id="med-pharmeasy" placeholder="Pharmeasy price" type="number" style="padding:10px; border-radius:6px; border:none; background:#0f172a; color:white;">
+      <input id="med-imageUrl" placeholder="Image URL (optional)" style="padding:10px; border-radius:6px; border:none; background:#0f172a; color:white;">
+    </div>
+    <button onclick="addMedicine()" style="margin-top:14px; padding:10px 24px; background:#22c55e; border:none; color:white; border-radius:6px; cursor:pointer;">
+      Add Medicine
+    </button>
+  </div>
+
+  <!-- Medicine table -->
+  <div class="card" style="margin-top:20px;">
+    <h3>All Medicines</h3>
+    <table width="100%" style="margin-top:10px; border-collapse:collapse;">
+      <thead>
+        <tr style="background:#0f172a;">
+          <th style="padding:10px; text-align:left;">Name</th>
+          <th style="padding:10px;">1mg</th>
+          <th style="padding:10px;">Apollo</th>
+          <th style="padding:10px;">Pharmeasy</th>
+          <th style="padding:10px;">Category</th>
+          <th>Last Updated</th> 
+          <th style="padding:10px;">Action</th>
+        </tr>
+      </thead>
+      <tbody id="medicineTable"></tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- <div id="section-users" class="section" style="display:none;">
+  <h1>Manage Users</h1>
+  <div class="card">
+    <h3>All Users</h3>
+    <table width="100%" style="border-collapse: collapse;">
+      <thead>
+        <tr style="background:#0f172a;">
+          <th style="padding:10px; text-align:left;">ID</th>
+          <th style="padding:10px; text-align:left;">Name</th>
+          <th style="padding:10px; text-align:left;">Email</th>
+          <th style="padding:10px; text-align:left;">Action</th>
+        </tr>
+      </thead>
+      <tbody id="userTable"></tbody>
+    </table>
+  </div>
+</div> -->
+    
+<!-- ── Users ── -->
+<div id="section-users" class="section main">
+  <h1>Manage Users</h1>
+  <div class="card">
+    <h3>All Users</h3>
+    <table width="100%" style="border-collapse:collapse;">
+      <thead>
+        <tr style="background:#0f172a;">
+          <th>ID</th><th>Name</th><th>Email</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="userTable"></tbody>
+    </table>
+  </div>
+</div>
+<!-- ══════════════════════════════════
+      EDIT PRICE MODAL
+══════════════════════════════════ -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <h3 id="editModalTitle">Update Prices</h3>
+
+    <label>1mg Price (₹)</label>
+    <input id="edit-1mg" type="number" placeholder="1mg price">
+
+    <label>Apollo Price (₹)</label>
+    <input id="edit-apollo" type="number" placeholder="Apollo price">
+
+    <label>Pharmeasy Price (₹)</label>
+    <input id="edit-pharmeasy" type="number" placeholder="Pharmeasy price">
+
+    <div class="modal-actions">
+      <button class="btn-save"   onclick="savePrice()">Save Changes</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
 
   <script>
-    const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
+    // Add these at the very TOP of your script
+const token = localStorage.getItem("token");
+const role  = localStorage.getItem("role");
 
-    // ✅ Protect page
-    if (!token) {
-      alert("Login required");
-      window.location.href = "/homepage/index.html";
-    }
+/* ── Auth guard ── */
+  if (!token) { alert("Login required"); window.location.href = "/homepage/index.html"; }
+  if (role !== "ADMIN") { alert("Access denied"); window.location.href = "/homepage/index.html"; }
 
-    if (role !== "ADMIN") {
-      alert("Access denied");
-      window.location.href = "/homepage/index.html";
-    }
 
-    // Show data
-    document.getElementById("email").innerText =
-      "Email: " + localStorage.getItem("email");
+document.getElementById("adminEmail").innerText = localStorage.getItem("email");
+/* ── Section switcher ── */
+  function showSection(name) {
+    document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+    document.getElementById("section-" + name).style.display = "block";
+    if (name === "medicines") loadMedicines();
+    if (name === "users")     loadUsers();
+    if (name === "dashboard") loadDashboardStats();
+  }
 
-    document.getElementById("role").innerText =
-      "Role: " + role;
-
-    function logout() {
-      localStorage.clear();
-      window.location.href = "/homepage/index.html";
-    }
-    function loadUsers() {
-    fetch("http://localhost:8080/api/users/admin/users", {
-    headers: {
-      "Authorization": "Bearer " + localStorage.getItem("token")
-    }
-  })
-  .then(res => {
-  if (res.status === 401 || res.status === 403) {
-    alert("Session expired, please login again");
+  /* ── Logout ── */
+  function logout() {
     localStorage.clear();
     window.location.href = "/homepage/index.html";
-    return;
   }
-  return res.json();
-})
-  .then(users => {
-    const table = document.getElementById("userTable");
-    table.innerHTML = "";
 
-    users.forEach(user => {
-      const row = `
-  <tr>
-    <td>${user.id}</td>
-    <td>${user.name}</td>
-    <td>${user.email}</td>
-    <td>
-      <button onclick="deleteUser(${user.id})">Delete</button>
-    </td>
-  </tr>
-`;
-      table.innerHTML += row;
-    });
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Failed to load users");
-  });
-}
 
-function deleteUser(id) {
-  const confirmDelete = confirm("Are you sure you want to delete this user?");
-  if (!confirmDelete) return;
+function loadMedicines() {
+    fetch("http://localhost:8080/api/medicines", {
+      headers: { "Authorization": "Bearer " + token }
+    })
+    .then(r => r.json())
+    .then(medicines => {
+      const tbody = document.getElementById("medicineTable");
+      tbody.innerHTML = "";
+      medicines.forEach(med => {
+        //  Format the updatedAt timestamp nicely
+        const lastUpdated = med.priceUpdatedAt
+          ? new Date(med.priceUpdatedAt).toLocaleString("en-IN", {
+              day: "2-digit", month: "short", year: "numeric",
+              hour: "2-digit", minute: "2-digit"
+            })
+          : "—";
 
-  fetch(`http://localhost:8080/api/users/admin/users/${id}`, {
+        tbody.innerHTML += `
+          <tr>
+            <td>${med.name}</td>
+            <td style="text-align:center;">₹${med.onemgPrice}</td>
+            <td style="text-align:center;">₹${med.apolloPrice}</td>
+            <td style="text-align:center;">₹${med.pharmeasyPrice}</td>
+            <td style="text-align:center;">${med.category || "—"}</td>
+            <td style="text-align:center; color:#94a3b8; font-size:0.85rem;">${lastUpdated}</td>
+            <td style="text-align:center;">
+              <button class="btn-edit"   onclick='openEditModal(${med.id}, "${med.name}", ${med.onemgPrice}, ${med.apolloPrice}, ${med.pharmeasyPrice})'>
+                ✏️ Edit
+              </button>
+              <button class="btn-delete" onclick="deleteMedicine(${med.id})">
+                🗑 Delete
+              </button>
+            </td>
+          </tr>`;
+      });
+    })
+    .catch(() => alert("Failed to load medicines"));
+  }
+function addMedicine() {
+    const medicine = {
+      name:          document.getElementById("med-name").value,
+      salt:          document.getElementById("med-salt").value,
+      desc:          document.getElementById("med-desc").value,
+      category:      document.getElementById("med-category").value,
+      onemgPrice:    document.getElementById("med-1mg").value,
+      apolloPrice:   document.getElementById("med-apollo").value,
+      pharmeasyPrice:document.getElementById("med-pharmeasy").value,
+      imageUrl:      document.getElementById("med-imageUrl").value,
+    };
+
+    fetch("http://localhost:8080/api/medicines", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(medicine)
+    })
+    .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+    .then(() => { alert("Medicine added!"); loadMedicines(); })
+    .catch(() => alert("Error adding medicine"));
+  }
+
+function deleteMedicine(id) {
+  if (!confirm("Delete this medicine?")) return;
+  fetch(`http://localhost:8080/api/medicines/${id}`, {
     method: "DELETE",
-    headers: {
-      "Authorization": "Bearer " + localStorage.getItem("token")
-    }
+    headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
   })
   .then(res => {
-    if (!res.ok) throw new Error("Delete failed");
-    return res.text();
+    if (!res.ok) throw new Error("Failed");
+    alert("Deleted");
+    loadMedicines();
   })
-  .then(msg => {
-    alert(msg);
-    loadUsers(); // 🔥 refresh table
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Error deleting user");
-  });
+  .catch(() => alert("Error deleting medicine"));
 }
-loadUsers();
+ let editingMedId = null;   // track which medicine we're editing
+
+  function openEditModal(id, name, price1mg, priceApollo, pharmeasy) {
+    editingMedId = id;
+    document.getElementById("editModalTitle").innerText = `Update Prices — ${name}`;
+    document.getElementById("edit-1mg").value       = price1mg;
+    document.getElementById("edit-apollo").value    = priceApollo;
+    document.getElementById("edit-pharmeasy").value = pharmeasy;
+    document.getElementById("editModal").classList.add("open");
+  }
+
+  function closeModal() {
+    document.getElementById("editModal").classList.remove("open");
+    editingMedId = null;
+  }
+
+  function savePrice() {
+    if (!editingMedId) return;
+
+    const updatedPrices = {
+      onemgPrice:     parseFloat(document.getElementById("edit-1mg").value),
+      apolloPrice:    parseFloat(document.getElementById("edit-apollo").value),
+      pharmeasyPrice: parseFloat(document.getElementById("edit-pharmeasy").value),
+    };
+
+fetch(`http://localhost:8080/api/medicines/${editingMedId}/prices`, {  // ✅ /prices added
+    method: "PUT",
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify(updatedPrices)
+})
+    .then(r => { if (!r.ok) throw new Error("Update failed"); return r.json(); })
+    .then(() => {
+      alert("Prices updated successfully!");
+      closeModal();
+      loadMedicines();
+    })
+    .catch(() => alert("Error updating prices. Check your backend endpoint."));
+  }
+
+  /* ── Close modal when clicking outside ── */
+  document.getElementById("editModal").addEventListener("click", function(e) {
+    if (e.target === this) closeModal();
+  });
+
+/* ════════════════════════════
+     USERS
+  ════════════════════════════ */
+  function loadUsers() {
+    fetch("http://localhost:8080/api/users/admin/users", {
+      headers: { "Authorization": "Bearer " + token }
+    })
+    .then(r => {
+      if (r.status === 401 || r.status === 403) {
+        alert("Session expired, please login again");
+        window.location.href = "/homepage/index.html";
+        return;
+      }
+      return r.json();
+    })
+    .then(users => {
+      if (!users) return;
+      const tbody = document.getElementById("userTable");
+      tbody.innerHTML = "";
+      users.forEach(user => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${user.id}</td>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>
+              <button class="btn-delete" onclick="deleteUser(${user.id})">Delete</button>
+            </td>
+          </tr>`;
+      });
+    })
+    .catch(() => alert("Failed to load users"));
+  }
+
+  function deleteUser(id) {
+    if (!confirm("Delete this user?")) return;
+    fetch(`http://localhost:8080/api/users/admin/users/${id}`, {
+      method: "DELETE",
+      headers: { "Authorization": "Bearer " + token }
+    })
+    .then(r => { if (!r.ok) throw new Error(); return r.text(); })
+    .then(msg => { alert(msg); loadUsers(); })
+    .catch(() => alert("Error deleting user"));
+  }
+
+  /* ════════════════════════════
+     DASHBOARD STATS
+  ════════════════════════════ */
+  function loadDashboardStats() {
+    fetch("http://localhost:8080/api/users/admin/users", {
+      headers: { "Authorization": "Bearer " + token }
+    })
+    .then(r => r.json())
+    .then(u => document.getElementById("totalUsers").innerText = u.length)
+    .catch(() => document.getElementById("totalUsers").innerText = "Error");
+
+    fetch("http://localhost:8080/api/medicines", {
+      headers: { "Authorization": "Bearer " + token }
+    })
+    .then(r => r.json())
+    .then(m => document.getElementById("totalMedicines").innerText = m.length)
+    .catch(() => document.getElementById("totalMedicines").innerText = "Error");
+  }
+
+  loadDashboardStats();
 
   </script>
 

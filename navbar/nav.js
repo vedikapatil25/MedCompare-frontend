@@ -30,11 +30,12 @@ function setupNavbar() {
     popup.style.display = "none";
     overlay.style.display = "none";
   };
+        // document.getElementById("loginBtn").onclick = login;
 
   // Login button
-document.getElementById("loginBtn")?.addEventListener("click", login);
+  document.getElementById("loginBtn")?.addEventListener("click", login);
   //register button 
-document.getElementById("registerBtn")?.addEventListener("click", register);
+  document.getElementById("registerBtn")?.addEventListener("click", register);
   // Profile page redirect
   document.getElementById("profileBtn")?.addEventListener("click", () => {
     window.location.href = "/profile/profile.html";
@@ -70,7 +71,7 @@ const profileNav = document.getElementById("profileNav");
     profileBtn.innerText = user.charAt(0).toUpperCase();
   }
 
-  // ✅ SHOW ADMIN ONLY IF ADMIN
+  // SHOW ADMIN ONLY IF ADMIN
   if (role === "ADMIN") {
     adminBtn.style.display = "block";
   } else {
@@ -108,7 +109,7 @@ function login() {
 
     console.log(payload);
 
-    // ✅ Store correct data
+    //  Store correct data
     localStorage.setItem("token", token);
     localStorage.setItem("email", payload.sub);
     localStorage.setItem("role", payload.role);
@@ -175,4 +176,41 @@ function adminDashboard() {
   .then(res => res.text())
   .then(data => alert(data))
   .catch(() => alert("Admin failed"));
+}
+// Add these to navbar.js
+
+function switchMode(mode) {
+    const loginTab = document.getElementById("loginTab");
+    const registerTab = document.getElementById("registerTab");
+    const nameGroup = document.getElementById("nameGroup");
+    const submitBtn = document.getElementById("loginBtn");
+    const forgotLink = document.getElementById("forgotLink");
+
+    if (mode === "login") {
+        loginTab.classList.add("active");
+        registerTab.classList.remove("active");
+        nameGroup.style.display = "none";
+        forgotLink.style.display = "block";
+        submitBtn.textContent = "Login";
+        submitBtn.onclick = login;
+    } else {
+        registerTab.classList.add("active");
+        loginTab.classList.remove("active");
+        nameGroup.style.display = "flex";
+        forgotLink.style.display = "none";
+        submitBtn.textContent = "Register";
+        submitBtn.onclick = register;
+    }
+}
+
+function togglePassword() {
+    const pwd = document.getElementById("password");
+    const btn = document.getElementById("eyeBtn");
+    if (pwd.type === "password") {
+        pwd.type = "text";
+        btn.textContent = "🙈";
+    } else {
+        pwd.type = "password";
+        btn.textContent = "👁️";
+    }
 }

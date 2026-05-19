@@ -3,11 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MedCompare - Dark Mode</title>
+  <title>MedCompare</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="../medicine/ayurvedic.css">
-    <!-- <link rel = "stylesheet" href = "../medicine/style.css"> -->
-
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 </head>
 
@@ -17,8 +15,8 @@
 
   <!-- Hero Section -->
   <section class="hero">
-    <h1>Compare Medicine & Lab Test Prices</h1>
-    <p>Find the best deals on trusted pharmacies and labs near you.</p>
+    <h1>Compare Medicine Prices</h1>
+    <p>Find the best deals on trusted pharmacies near you.</p>
     <input type="text" id = "searchInput" placeholder="Search medicine..." />
     <button id="searchBtn" class="compare-btn">Compare Now</button>
   </section>
@@ -43,6 +41,180 @@
     <button class="next-btn">&#10095;</button>
   </div>
 
+  <!-- How It Works Section -->
+<section class="how-it-works">
+  <h2>How It Works</h2>
+  <div class="steps-container">
+
+    <div class="step-card">
+      <div class="step-number">1</div>
+      <i class="ti ti-search step-icon"></i>
+      <h3>Search</h3>
+      <p>Type a medicine name, brand or active ingredient in the search bar above.</p>
+    </div>
+
+    <div class="step-arrow">
+      <i class="ti ti-arrow-right"></i>
+    </div>
+
+    <div class="step-card">
+      <div class="step-number">2</div>
+      <i class="ti ti-adjustments-horizontal step-icon"></i>
+      <h3>Compare</h3>
+      <p>See prices from 1mg, Apollo, PharmEasy — side by side.</p>
+    </div>
+
+    <div class="step-arrow">
+      <i class="ti ti-arrow-right"></i>
+    </div>
+
+    <div class="step-card">
+      <div class="step-number">3</div>
+      <i class="ti ti-tag step-icon"></i>
+      <h3>Save</h3>
+      <p>Pick the lowest price and save on your medicine purchase.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- Trusted Pharmacies Section -->
+<section class="trusted-pharmacies">
+  <p class="trusted-label">Prices from trusted pharmacies</p>
+  <div class="pharmacy-logos">
+
+    <div class="pharmacy-badge">
+      <i class="ti ti-pill"></i>
+      <span>1mg</span>
+    </div>
+
+    <div class="pharmacy-badge">
+      <i class="ti ti-heart-plus"></i>
+      <span>Apollo Pharmacy</span>
+    </div>
+
+    <div class="pharmacy-badge">
+      <i class="ti ti-clipboard-heart"></i>
+      <span>PharmEasy</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- Health Tips Section -->
+<section class="health-tips">
+  <h2>Quick Health Tips</h2>
+  <p class="tips-sub">Simple habits to keep you healthy every day</p>
+  <div class="tips-grid">
+
+    <div class="tip-card">
+      <div class="tip-icon"><i class="ti ti-sun"></i></div>
+      <h3>Take vitamins with food</h3>
+      <p>Fat-soluble vitamins (A, D, E, K) absorb best when taken with a meal containing healthy fats.</p>
+    </div>
+
+    <div class="tip-card">
+      <div class="tip-icon"><i class="ti ti-droplet"></i></div>
+      <h3>Store medicines correctly</h3>
+      <p>Keep medicines away from heat and humidity. Avoid storing them in bathrooms or near windows.</p>
+    </div>
+
+    <div class="tip-card">
+      <div class="tip-icon"><i class="ti ti-clock"></i></div>
+      <h3>Always check expiry dates</h3>
+      <p>Expired medicines can be ineffective or harmful. Always verify before purchasing or consuming.</p>
+    </div>
+
+    <div class="tip-card">
+      <div class="tip-icon"><i class="ti ti-droplets"></i></div>
+      <h3>Stay hydrated daily</h3>
+      <p>Drink at least 8 glasses of water a day. Proper hydration helps medicines work more effectively.</p>
+    </div>
+
+    <div class="tip-card">
+      <div class="tip-icon"><i class="ti ti-pill"></i></div>
+      <h3>Complete your course</h3>
+      <p>Always finish your full antibiotic course even if you feel better early, to prevent resistance.</p>
+    </div>
+
+    <div class="tip-card">
+      <div class="tip-icon"><i class="ti ti-stethoscope"></i></div>
+      <h3>Consult before switching</h3>
+      <p>Never switch to a generic or alternate medicine without consulting your doctor or pharmacist first.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+  <h2>Frequently Asked Questions</h2>
+  <p class="faq-sub">Everything you need to know about MedCompare</p>
+
+  <div class="faq-list">
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span>Are the prices shown always up to date?</span>
+        <i class="ti ti-chevron-down faq-chevron"></i>
+      </button>
+      <div class="faq-answer">
+        <p>Prices are updated manually by our team on a regular basis. We always try to keep them as accurate as possible, but we recommend verifying the final price on the pharmacy's website before purchasing.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span>Is MedCompare free to use?</span>
+        <i class="ti ti-chevron-down faq-chevron"></i>
+      </button>
+      <div class="faq-answer">
+        <p>Completely free. We never charge users for comparing prices. We simply help you find the best deal available.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span>Do you sell medicines directly?</span>
+        <i class="ti ti-chevron-down faq-chevron"></i>
+      </button>
+      <div class="faq-answer">
+        <p>No — we don't sell medicines. We compare prices and redirect you to the pharmacy with the best deal so you can buy directly from them.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span>Which pharmacies do you compare?</span>
+        <i class="ti ti-chevron-down faq-chevron"></i>
+      </button>
+      <div class="faq-answer">
+        <p>We currently compare prices from 1mg, Apollo Pharmacy, and PharmEasy — three of India's most trusted online pharmacies.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span>Can I set a price drop alert for a medicine?</span>
+        <i class="ti ti-chevron-down faq-chevron"></i>
+      </button>
+      <div class="faq-answer">
+        <p>Yes! Search for any medicine, open its price comparison, and click "Alert me when price drops". You'll get an email the moment the price falls.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span>Are generic medicines safe to buy?</span>
+        <i class="ti ti-chevron-down faq-chevron"></i>
+      </button>
+      <div class="faq-answer">
+        <p>Generic medicines contain the same active ingredients as branded ones and are approved by regulatory authorities. Always consult your doctor before switching.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
 
     <!-- Modal (hidden until opened) -->
   <div id="modal" class="modal" role="dialog" aria-modal="true">
@@ -50,10 +222,7 @@
       <span id="closeModal" class="close">&times;</span>
       <div id="modalBody" class="modal-body"></div>
       <p id="modalDescription" class="modal-desc"></p>
-
          <p id="lowestPriceTip" class="lowest-tip"></p>
-
-
         <!-- filled by JS -->
     </div>
   </div>
@@ -71,7 +240,7 @@
    </script>
 
   <!-- Toggle Button -->
-  <button id="toggleMode">🌙 Toggle Mode</button>
+  <button id="toggleMode">Toggle Mode</button>
 
   <script src="script.js"></script>
 </body>

@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <!-- <link rel = "stylesheet" href = "style.css"> -->
+    <link rel = "stylesheet" href = "../homepage/style.css">
     <link rel = "stylesheet" href = "ayurvedic.css">
-        <link rel = "stylesheet" href = "../homepage/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
 
 </head>
 <body>
-    <!-- Navbar -->
-    <div id="navbar"></div>
-<script src="/navbar/nav.js"></script>
+  <!-- Navbar -->
+  <div id="navbar"></div>
+  <script src="/navbar/nav.js"></script>
 
 
   <div class="search-container" style="max-width:1200px;margin: 0 auto;">
@@ -31,12 +32,8 @@
     <div class="modal-content">
       <span id="closeModal" class="close">&times;</span>
       <div id="modalBody" class="modal-body">
-      <p id="modalDescription" class="modal-desc"></p>
-
-         <p id="lowestPriceTip" class="lowest-tip"></p>
-
-
-        <!-- filled by JS -->
+        <p id="modalDescription" class="modal-desc"></p>
+        <p id="lowestPriceTip" class="lowest-tip"></p>       
       </div>
     </div>
   </div>
@@ -46,7 +43,7 @@
     <!-- Load Footer -->
    <script>
      // Load Footer
-  fetch("../footer/footer.html")
+    fetch("../footer/footer.html")
     .then(res => res.text())
     .then(data => {
       document.getElementById("footer").innerHTML = data;
