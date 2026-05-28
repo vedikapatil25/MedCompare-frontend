@@ -212,13 +212,15 @@ function openModal(item) {
       border:1px solid #1e3050;
     "></div>
 <div class="mc-alert-section">
-  <button 
+  
+<button 
     class="mc-alert-btn" 
     id="alertBtn"
-    onclick="handleAlertSubscribe(${item.id}, '${item.name}')">
-    <i class="ti ti-bell" aria-hidden="true"></i>
-    Alert me when price drops
-  </button>
+    data-medicine-id="${item.id}"
+    data-medicine-name="${item.name.replace(/"/g, '&quot;')}"
+    data-lowest-price="${lowestPrice}">
+    <i class="ti ti-bell"></i> Alert me when price drops
+</button>
   <span id="alertStatus" style="font-size:13px; color: var(--color-text-secondary);"></span>
 </div>
 
@@ -234,6 +236,13 @@ function openModal(item) {
   if (tip) tip.textContent = "";
 
   document.getElementById("modal").style.display = "flex";
+  // Attach alert button listener safely
+document.getElementById("alertBtn").addEventListener("click", function() {
+    const medicineId = Number(this.dataset.medicineId);
+    const medicineName = this.dataset.medicineName;
+    const lowestPrice = Number(this.dataset.lowestPrice);
+    handleAlertSubscribe(medicineId, medicineName, lowestPrice);
+});
   renderPriceChart(sorted, lowestPrice, highestPrice); 
 } 
 function renderPriceChart(prices, lowestPrice, highestPrice) {
@@ -314,8 +323,6 @@ console.log(allMedicines);
 
 
 
-
-
 nextBtn.addEventListener("click", () => {
   shopcategories.scrollBy({ left: 500, behavior: "smooth" });
 });
@@ -328,72 +335,111 @@ toggleBtn.addEventListener("click", () => {
   document.body.classList.toggle("light-mode");
 });
 // ------------------ PRICE DROP ALERT ------------------
-async function handleAlertSubscribe(medicineId, medicineName) {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    document.getElementById("alertStatus").textContent = "Please login to set alerts.";
-    return;
-  }
+// async function handleAlertSubscribe(medicineId, medicineName) {
+//   const token = localStorage.getItem("token");
+//   if (!token) {
+//     document.getElementById("alertStatus").textContent = "Please login to set alerts.";
+//     return;
+//   }
 
-  const btn = document.getElementById("alertBtn");
-  btn.disabled = true;
-  btn.innerHTML = `<i class="ti ti-loader" aria-hidden="true"></i> Setting alert...`;
+//   const btn = document.getElementById("alertBtn");
+//   btn.disabled = true;
+//   btn.innerHTML = `<i class="ti ti-loader" aria-hidden="true"></i> Setting alert...`;
 
-  try {
-    const res = await fetch("http://localhost:8080/api/alerts/subscribe", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
-      },
-      body: JSON.stringify({ medicineId })
-    });
+//   try {
+//     const res = await fetch("http://localhost:8080/api/alerts/subscribe", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         "Authorization": "Bearer " + token
+//       },
+//       body: JSON.stringify({ medicineId })
+//     });
 
-    const data = await res.json();
+//     const data = await res.json();
 
-    if (res.ok) {
-      btn.innerHTML = `<i class="ti ti-bell-check" aria-hidden="true"></i> Alert set!`;
-      btn.style.background = "#1a5c32";
-      btn.style.color = "#2ecc71";
-      document.getElementById("alertStatus").textContent =
-        `You'll get an email when ${medicineName} price drops.`;
-    } else if (res.status === 409) {
-      // Already subscribed
-      btn.innerHTML = `<i class="ti ti-bell-off" aria-hidden="true"></i> Remove alert`;
-      btn.disabled = false;
-      btn.onclick = () => handleAlertUnsubscribe(medicineId);
-      document.getElementById("alertStatus").textContent = "Already watching this medicine.";
-    } else {
-      throw new Error(data.message || "Failed");
+//     if (res.ok) {
+//       btn.innerHTML = `<i class="ti ti-bell-check" aria-hidden="true"></i> Alert set!`;
+//       btn.style.background = "#1a5c32";
+//       btn.style.color = "#2ecc71";
+//       document.getElementById("alertStatus").textContent =
+//         `You'll get an email when ${medicineName} price drops.`;
+//     } else if (res.status === 409) {
+//       // Already subscribed
+//       btn.innerHTML = `<i class="ti ti-bell-off" aria-hidden="true"></i> Remove alert`;
+//       btn.disabled = false;
+//       btn.onclick = () => handleAlertUnsubscribe(medicineId);
+//       document.getElementById("alertStatus").textContent = "Already watching this medicine.";
+//     } else {
+//       throw new Error(data.message || "Failed");
+//     }
+//   } catch (err) {
+//     btn.disabled = false;
+//     btn.innerHTML = `<i class="ti ti-bell" aria-hidden="true"></i> Alert me when price drops`;
+//     document.getElementById("alertStatus").textContent = "Something went wrong. Try again.";
+//   }
+// }
+
+// async function handleAlertUnsubscribe(medicineId) {
+//   const token = localStorage.getItem("token");
+//   const btn = document.getElementById("alertBtn");
+//   btn.disabled = true;
+
+//   try {
+//     await fetch("http://localhost:8080/api/alerts/unsubscribe", {
+//       method: "DELETE",
+//       headers: {
+//         "Content-Type": "application/json",
+//         "Authorization": "Bearer " + token
+//       },
+//       body: JSON.stringify({ medicineId })
+//     });
+
+//     btn.innerHTML = `<i class="ti ti-bell" aria-hidden="true"></i> Alert me when price drops`;
+//     btn.disabled = false;
+//     btn.onclick = () => handleAlertSubscribe(medicineId);
+//     document.getElementById("alertStatus").textContent = "Alert removed.";
+//   } catch (err) {
+//     btn.disabled = false;
+//     document.getElementById("alertStatus").textContent = "Could not remove alert.";
+//   }
+// }
+const API_BASE = 'http://localhost:8080/api';
+
+// Call this when user clicks "Set Alert" on a medicine card
+async function setAlert(userId, medicineId, currentPrice) {
+    try {
+        const res = await fetch(`${API_BASE}/alerts`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId:           userId,
+                medicineId:       medicineId,
+                priceAtSubscribe: currentPrice
+            })
+        });
+        const data = await res.json();
+
+        if (data.message) {
+            alert(data.message);        // e.g. "Alert already exists"
+        } else {
+            alert('✅ Alert set! We\'ll notify you when the price drops.');
+        }
+    } catch (err) {
+        console.error('Failed to set alert:', err);
     }
-  } catch (err) {
-    btn.disabled = false;
-    btn.innerHTML = `<i class="ti ti-bell" aria-hidden="true"></i> Alert me when price drops`;
-    document.getElementById("alertStatus").textContent = "Something went wrong. Try again.";
-  }
 }
 
-async function handleAlertUnsubscribe(medicineId) {
-  const token = localStorage.getItem("token");
-  const btn = document.getElementById("alertBtn");
-  btn.disabled = true;
+// Call this to show a user's active alerts
+async function loadMyAlerts(userId) {
+    const res = await fetch(`${API_BASE}/alerts/user/${userId}`);
+    const alerts = await res.json();
+    console.log('My alerts:', alerts);
+    // bind to your table/list in the UI here
+}
 
-  try {
-    await fetch("http://localhost:8080/api/alerts/unsubscribe", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
-      },
-      body: JSON.stringify({ medicineId })
-    });
-
-    btn.innerHTML = `<i class="ti ti-bell" aria-hidden="true"></i> Alert me when price drops`;
-    btn.disabled = false;
-    btn.onclick = () => handleAlertSubscribe(medicineId);
-    document.getElementById("alertStatus").textContent = "Alert removed.";
-  } catch (err) {
-    btn.disabled = false;
-    document.getElementById("alertStatus").textContent = "Could not remove alert.";
-  }
+// Call this when user clicks "Cancel Alert"
+async function cancelAlert(alertId) {
+    await fetch(`${API_BASE}/alerts/${alertId}/cancel`, { method: 'PUT' });
+    alert('Alert cancelled.');
 }

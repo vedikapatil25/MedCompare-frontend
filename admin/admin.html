@@ -163,11 +163,45 @@
 
     .section { display: none; }
     #section-dashboard { display: block; }
+    
+  /*back button*/
+.back-btn-wrapper {
+  position: absolute;
+  top: 10px;    
+  left: 20px;
+  z-index: 10;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #aac4e0;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
 
   </style>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 </head>
 
 <body>
+<!--back button-->
+  <div class="back-btn-wrapper">
+    <button class="back-btn" onclick="history.back()">
+      <i class="ti ti-arrow-left"></i> Back
+    </button>
+  </div>
 
   <div class="sidebar">
     <h2>Admin Panel</h2>

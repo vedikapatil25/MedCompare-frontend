@@ -36,7 +36,8 @@ function setupNavbar() {
   document.getElementById("loginBtn")?.addEventListener("click", login);
   //register button 
   document.getElementById("registerBtn")?.addEventListener("click", register);
-  // Profile page redirect
+  document.getElementById("forgotLink")?.addEventListener("click", showForgotView);
+// Profile page redirect
   document.getElementById("profileBtn")?.addEventListener("click", () => {
     window.location.href = "/profile/profile.html";
   });
@@ -213,4 +214,56 @@ function togglePassword() {
         pwd.type = "password";
         btn.textContent = "👁️";
     }
+}
+// ================= FORGOT PASSWORD =================
+
+function showForgotView() {
+    // Hide login elements
+    document.getElementById("loginTab").parentElement.style.display = "none"; // toggle btns
+    document.getElementById("email").closest(".input-group").style.display = "none";
+    document.getElementById("password").closest(".input-group").style.display = "none";
+    document.getElementById("forgotLink").style.display = "none";
+    document.getElementById("loginBtn").style.display = "none";
+
+    // Show forgot view
+    document.getElementById("forgotView").style.display = "flex";
+    document.getElementById("resetSuccessMsg").style.display = "none";
+    document.getElementById("forgotEmail").value = "";
+}
+
+function backToLogin() {
+    // Show login elements
+    document.getElementById("loginTab").parentElement.style.display = "flex"; // toggle btns
+    document.getElementById("email").closest(".input-group").style.display = "flex";
+    document.getElementById("password").closest(".input-group").style.display = "flex";
+    document.getElementById("forgotLink").style.display = "block";
+    document.getElementById("loginBtn").style.display = "block";
+
+    // Hide forgot view
+    document.getElementById("forgotView").style.display = "none";
+}
+
+function sendResetLink() {
+    const email = document.getElementById("forgotEmail").value.trim();
+
+    if (!email) {
+        alert("Please enter your email.");
+        return;
+    }
+
+    fetch("http://localhost:8080/api/users/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email })
+    })
+    .then(res => {
+        // Always show success (don't reveal if email exists or not)
+        document.getElementById("forgotEmail").style.display = "none";
+        document.querySelector("#forgotView .otp-btn").style.display = "none";
+        document.getElementById("resetSuccessMsg").style.display = "block";
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Something went wrong. Try again.");
+    });
 }

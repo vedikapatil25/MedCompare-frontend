@@ -422,6 +422,26 @@
             <div class="forgot-link" id="forgotLink">
               Forgot password?
             </div>
+            <!-- FORGOT PASSWORD VIEW -->
+<div id="forgotView" style="display:none; flex-direction:column; gap:12px;">
+    <div style="display:flex; align-items:center; gap:8px; cursor:pointer; color:#3b82f6; font-size:14px;" onclick="backToLogin()">
+        ← Back to Login
+    </div>
+    <h3 style="margin:0; color:#0f172a;">Reset Password</h3>
+    <p style="font-size:13px; color:#6b7280; margin:0;">Enter your registered email. We'll send you a reset link.</p>
+
+    <div class="input-group">
+        <span class="input-label">Email address</span>
+        <input type="email" id="forgotEmail" placeholder="you@example.com">
+    </div>
+
+    <button class="otp-btn" onclick="sendResetLink()">Send Reset Link</button>
+
+    <!-- Success message (hidden by default) -->
+    <div id="resetSuccessMsg" style="display:none; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:12px; font-size:13px; color:#15803d; text-align:center;">
+        ✅ Reset link sent! Check your email inbox.
+    </div>
+</div>
             <!-- Submit Button -->
             <button class="otp-btn" id="loginBtn">Login</button>
 

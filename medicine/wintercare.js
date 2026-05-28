@@ -359,13 +359,15 @@ function openModal(item) {
       border:1px solid #1e3050;
     "></div>
 <div class="mc-alert-section">
-  <button 
+
+<button 
     class="mc-alert-btn" 
     id="alertBtn"
-    onclick="handleAlertSubscribe(${item.id}, '${item.name}')">
-    <i class="ti ti-bell" aria-hidden="true"></i>
-    Alert me when price drops
-  </button>
+    data-medicine-id="${item.id}"
+    data-medicine-name="${item.name.replace(/"/g, '&quot;')}"
+    data-lowest-price="${lowestPrice}">
+    <i class="ti ti-bell"></i> Alert me when price drops
+</button>
   <span id="alertStatus" style="font-size:13px; color: var(--color-text-secondary);"></span>
 </div>
     ${savings > 0 ? `
@@ -380,6 +382,13 @@ function openModal(item) {
   if (tip) tip.textContent = "";
 
   document.getElementById("modal").style.display = "flex";
+  // Attach alert button listener safely
+document.getElementById("alertBtn").addEventListener("click", function() {
+    const medicineId = Number(this.dataset.medicineId);
+    const medicineName = this.dataset.medicineName;
+    const lowestPrice = Number(this.dataset.lowestPrice);
+    handleAlertSubscribe(medicineId, medicineName, lowestPrice);
+});
   renderPriceChart(sorted, lowestPrice, highestPrice); 
 }
 function renderPriceChart(prices, lowestPrice, highestPrice) {
@@ -476,49 +485,51 @@ function renderPriceChart(prices, lowestPrice, highestPrice) {
     searchInput.focus();
     loadProducts("winter_care");
     // ------------------ PRICE DROP ALERT ------------------
-async function handleAlertSubscribe(medicineId, medicineName) {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    document.getElementById("alertStatus").textContent = "Please login to set alerts.";
-    return;
-  }
-
-  const btn = document.getElementById("alertBtn");
-  btn.disabled = true;
-  btn.innerHTML = `<i class="ti ti-loader" aria-hidden="true"></i> Setting alert...`;
-
-  try {
-    const res = await fetch("http://localhost:8080/api/alerts/subscribe", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
-      },
-      body: JSON.stringify({ medicineId })
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      btn.innerHTML = `<i class="ti ti-bell-check" aria-hidden="true"></i> Alert set!`;
-      btn.style.background = "#1a5c32";
-      btn.style.color = "#2ecc71";
-      document.getElementById("alertStatus").textContent =
-        `You'll get an email when ${medicineName} price drops.`;
-    } else if (res.status === 409) {
-      // Already subscribed
-      btn.innerHTML = `<i class="ti ti-bell-off" aria-hidden="true"></i> Remove alert`;
-      btn.disabled = false;
-      btn.onclick = () => handleAlertUnsubscribe(medicineId);
-      document.getElementById("alertStatus").textContent = "Already watching this medicine.";
-    } else {
-      throw new Error(data.message || "Failed");
+  async function handleAlertSubscribe(medicineId, medicineName, lowestPrice) {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        document.getElementById("alertStatus").textContent = "Please login to set alerts.";
+        return;
     }
-  } catch (err) {
-    btn.disabled = false;
-    btn.innerHTML = `<i class="ti ti-bell" aria-hidden="true"></i> Alert me when price drops`;
-    document.getElementById("alertStatus").textContent = "Something went wrong. Try again.";
-  }
+
+    const btn = document.getElementById("alertBtn");
+    btn.disabled = true;
+    btn.innerHTML = `<i class="ti ti-loader"></i> Setting alert...`;
+
+    try {
+        const res = await fetch("http://localhost:8080/api/alerts/subscribe", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({ 
+                medicineId: medicineId,
+                priceAtSubscribe: lowestPrice    // ✅ must be here
+            })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            btn.innerHTML = `<i class="ti ti-bell-check"></i> Alert set!`;
+            btn.style.background = "#1a5c32";
+            btn.style.color = "#2ecc71";
+            document.getElementById("alertStatus").textContent =
+                `You'll get an email when ${medicineName} price drops.`;
+        } else if (res.status === 409) {
+            btn.innerHTML = `<i class="ti ti-bell-off"></i> Remove alert`;
+            btn.disabled = false;
+            btn.onclick = () => handleAlertUnsubscribe(medicineId);
+            document.getElementById("alertStatus").textContent = "Already watching this medicine.";
+        } else {
+            throw new Error(data.message || "Failed");
+        }
+    } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="ti ti-bell"></i> Alert me when price drops`;
+        document.getElementById("alertStatus").textContent = "Something went wrong. Try again.";
+    }
 }
 
 async function handleAlertUnsubscribe(medicineId) {

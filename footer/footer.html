@@ -66,9 +66,36 @@
   font-size: 14px;
   color: #888;
 }
+/* Social links wrapper */
+.social-links {
+  display: flex;
+  justify-content: center;
+  
+  gap: 15px;
+  margin-top: 10px;
+}
 
+/* Each icon link */
+.social-links a {
+  color: #ffffff;
+  font-size: 22px;
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+.social-container{
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding-top: 20px;
+}
 
-    </style>
+/* Hover effect */
+.social-links a:hover {
+  color: #f0a500;        /* Changes color on hover */
+  transform: scale(1.2); /* Slightly zooms in */
+}
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 <footer class="site-footer">
@@ -112,7 +139,22 @@
     </div>
 
   </div>
+  <div class = "social-container">
+  <p>Follow us on :</p>
+  <div class="social-links">
+    <a href="https://facebook.com/yourpage" target="_blank" rel="noopener noreferrer">
+  <i class="fab fa-facebook"></i>
+</a>
 
+<a href="https://instagram.com/yourprofile" target="_blank" rel="noopener noreferrer">
+  <i class="fab fa-instagram"></i>
+</a>
+
+<a href="https://linkedin.com/in/yourname" target="_blank" rel="noopener noreferrer">
+  <i class="fab fa-linkedin"></i>
+</a>
+  </div>
+  </div>
   <!-- Bottom -->
   <div class="footer-bottom">
     © 2026 MedCompare. All rights reserved.

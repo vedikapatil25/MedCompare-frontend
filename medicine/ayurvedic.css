@@ -269,3 +269,28 @@ body {
 .mc-alert-btn i {
   font-size: 16px;
 }
+/*back button*/
+.back-btn-wrapper {
+  position: absolute;
+  top: 90px;        /* adjust this to match your navbar height */
+  left: 24px;
+  z-index: 10;
+}
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #aac4e0;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
